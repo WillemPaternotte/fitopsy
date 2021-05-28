@@ -7,9 +7,10 @@
 #
 ###------------------bibliotheek en globale variabelen--------------
 from tkinter import *
-from tkinter import font
 from tkinter.font import Font
+
 from pygame import mixer
+
 import SQL_fitopsy
 
 venster = Tk()
