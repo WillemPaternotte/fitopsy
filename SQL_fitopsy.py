@@ -42,24 +42,29 @@ def addSong(name, artist, genre, file_location, streams):
     artist_id = int(getArtistFromTable("artists", artist)[0])
 
     cursor.execute("INSERT INTO songs VALUES (NULL, ?, ?, ?, ?, ?) ", (name, artist_id, genre, file_location, streams))
+    cursor.execute("COMMIT")
     print("nummer toegevoeg")
 
 def addArtist(artist):
-    cursor.execute("INSERT INTO artists VALUES (NULL, ? ) ", (artist, )) 
+    cursor.execute("INSERT INTO artists VALUES (NULL, ? ) ", (artist, ))
+    cursor.execute("COMMIT") 
     print("Artiest toegevoegd")
 
 def addPlaylist(name, user_id):
     cursor.execute("INSERT INTO playlists VALUES (NULL, ?, ?) ", (name, user_id))
+    cursor.execute("COMMIT")
     print("Playlist aangemaakt") 
 
 def addSongOnPlaylist(song, playlist):
     song_id = int(getSongFromTable("songs", song)[0])
     playlist_id = int(getPlaylistFromTable("playlists", playlist)[0])
     cursor.execute("INSERT INTO songs_on_playlists VALUES(NULL,?,?)",(song_id, playlist_id))
+    cursor.execute("COMMIT")
     print("nummer toegevoegd aan playlist")
 
 def addUser(name):
     cursor.execute("INSERT INTO users VALUES (NULL, ?)",(name, ))
+    cursor.execute("COMMIT")
     print("gebruiker toegevoegd")
 
 # Gegevens in tabel afdrukken
@@ -72,6 +77,7 @@ def gegevensUitTabelPrinten(tabelnaam):
 # Hele tabel verwijderen uit de database
 def verwijderTabel(tabelNaam):
     cursor.execute("DROP TABLE IF EXISTS " + tabelNaam)
+    cursor.execute("COMMIT")
     print("Tabel "+ tabelNaam + " verwijderd")
 
 # Bepaal welke ID (primary key) bij een gegeven hoort
@@ -104,54 +110,54 @@ def verwijderUitTabel(tabelnaam, titel):
 #     print("Boektitel aangepast van " +titeloud + " naar: "+ titelnieuw)
 
 ### HOOFDPROGRAMMA
-keuze = ""
-while not keuze == "STOP" :
-    print("1. Maak tabellen aan")
-    print("2. Vul tabbellen")
-    print("3. Toon alle tabellen")
-    print("4. Verwijder alle tabellen")
-    print("5. Nummer verwijderen")
-    print("STOP")
-    print("Geef je keuze: ")
-    keuze = input()
-    if keuze == "1":
-        makeTableSongs()
-        makeTableArtists()
-        makeTablePlaylists()
-        makeTableSongOnPlaylist()
-        makeTableUsers()
-      
-    elif keuze == "2":
-        addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
-        addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
-        addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
-        addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
-        addPlaylist("vibes", 1)
-        addPlaylist("sporten", 1)
-        addPlaylist("slapen", 2)
-        addSongOnPlaylist("runaway", "vibes")
-        addSongOnPlaylist("i wonder", "sporten")
-        addSongOnPlaylist("guccigang", "slapen")
-        addSongOnPlaylist("watermelonman", "sporten")
-        addUser("willem")
-        addUser("gebruiker2")
-      
-    elif keuze == "3":
-        gegevensUitTabelPrinten("songs")
-        gegevensUitTabelPrinten("artists")
-        gegevensUitTabelPrinten("playlists")
-        gegevensUitTabelPrinten("songs_on_playlists")
-        gegevensUitTabelPrinten("users")
-      
-    elif keuze == "4":
-        verwijderTabel("songs")
-        verwijderTabel("artists")
-        verwijderTabel("playlists")
-        verwijderTabel("songs_on_playlists")
-        verwijderTabel("users")
-    elif keuze == "5":
-        print("welk nummer wil je verwijderen:")
-        name = str(input())
-        verwijderUitTabel("songs", name)
-
-print("Doei")
+# keuze = ""
+# while not keuze == "STOP" :
+#     print("1. Maak tabellen aan")
+#     print("2. Vul tabbellen")
+#     print("3. Toon alle tabellen")
+#     print("4. Verwijder alle tabellen")
+#     print("5. Nummer verwijderen")
+#     print("STOP")
+#     print("Geef je keuze: ")
+#     keuze = input()
+#     if keuze == "1":
+#         makeTableSongs()
+#         makeTableArtists()
+#         makeTablePlaylists()
+#         makeTableSongOnPlaylist()
+#         makeTableUsers()
+#       
+#     elif keuze == "2":
+#         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
+#         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
+#         addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
+#         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
+#         addPlaylist("vibes", 1)
+#         addPlaylist("sporten", 1)
+#         addPlaylist("slapen", 2)
+#         addSongOnPlaylist("runaway", "vibes")
+#         addSongOnPlaylist("i wonder", "sporten")
+#         addSongOnPlaylist("guccigang", "slapen")
+#         addSongOnPlaylist("watermelonman", "sporten")
+#         addUser("willem")
+#         addUser("gebruiker2")
+#       
+#     elif keuze == "3":
+#         gegevensUitTabelPrinten("songs")
+#         gegevensUitTabelPrinten("artists")
+#         gegevensUitTabelPrinten("playlists")
+#         gegevensUitTabelPrinten("songs_on_playlists")
+#         gegevensUitTabelPrinten("users")
+#       
+#     elif keuze == "4":
+#         verwijderTabel("songs")
+#         verwijderTabel("artists")
+#         verwijderTabel("playlists")
+#         verwijderTabel("songs_on_playlists")
+#         verwijderTabel("users")
+#     elif keuze == "5":
+#         print("welk nummer wil je verwijderen:")
+#         name = str(input())
+#         verwijderUitTabel("songs", name)
+# 
+# print("Doei")
