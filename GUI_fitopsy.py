@@ -18,7 +18,7 @@ venster = Tk()
 mainFont = Font(
     family="Comic Sans MS",
     size= 40,
-)
+    )
 venster.wm_title("fitopsy" )
 venster["bg"] = "white"
 venster.iconbitmap("fitopsy.ico")
@@ -27,23 +27,23 @@ venster.iconbitmap("fitopsy.ico")
 
 
 ###------------------Functie defenities-----------------------------
-def zoekKlant():
-    gevonden_klanten=SQL_fitopsy.zoekKlantInTabel(ingevoerde_klantnaam.get())
-    print(gevonden_klanten)
+def zoekNummer():
+    gevonden_nummer=SQL_fitopsy.getSongFromTable("songs", ingevoerde_nummer.get())
+    print(gevonden_nummer)
 
 ###------------------Hoofdprogramma---------------------------------
-labelIntro = Label(venster,text="welkom", font = mainFont )
+labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
 labelIntro.grid(row=0, column=0, sticky="W")
 
-labelklantnaam = Label(venster,text="klantnaam:" )
-labelklantnaam.grid(row=1, column=0, sticky="W")
+labelNummer = Label(venster,text="nummer:" )
+labelNummer.grid(row=1, column=0, sticky="W")
 
-ingevoerde_klantnaam = StringVar()
-entryKlantnaam = Entry(venster, textvariable=ingevoerde_klantnaam)
-entryKlantnaam.grid(row=1, column=1, sticky="w")
+ingevoerde_nummer = StringVar()
+entryNummer = Entry(venster, textvariable=ingevoerde_nummer)
+entryNummer.grid(row=1, column=1, sticky="w")
 
-knopzoekopklant = Button(venster, text="zoek klant", width= 12, command=zoekKlant)
-knopzoekopklant.grid(row=1,column=4,sticky="W")
+knopNummer = Button(venster, text="zoek nummer", width= 12, command=zoekNummer)
+knopNummer.grid(row=1,column=4,sticky="W")
 
 knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
 knopSluit.grid(row=17, column=4)

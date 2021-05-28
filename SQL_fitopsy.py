@@ -120,43 +120,38 @@ def verwijderUitTabel(tabelnaam, titel):
 #         makeTablePlaylists()
 #         makeTableSongOnPlaylist()
 #         makeTableUsers()
-        
+#       
 #     elif keuze == "2":
 #         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
 #         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
 #         addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
 #         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
-
 #         addPlaylist("vibes", 1)
 #         addPlaylist("sporten", 1)
 #         addPlaylist("slapen", 2)
-
 #         addSongOnPlaylist("runaway", "vibes")
 #         addSongOnPlaylist("i wonder", "sporten")
 #         addSongOnPlaylist("guccigang", "slapen")
 #         addSongOnPlaylist("watermelonman", "sporten")
-
 #         addUser("willem")
 #         addUser("gebruiker2")
-        
+#       
 #     elif keuze == "3":
 #         gegevensUitTabelPrinten("songs")
 #         gegevensUitTabelPrinten("artists")
 #         gegevensUitTabelPrinten("playlists")
 #         gegevensUitTabelPrinten("songs_on_playlists")
 #         gegevensUitTabelPrinten("users")
-        
-
+#       
 #     elif keuze == "4":
 #         verwijderTabel("songs")
 #         verwijderTabel("artists")
 #         verwijderTabel("playlists")
 #         verwijderTabel("songs_on_playlists")
 #         verwijderTabel("users")
-
 #     elif keuze == "5":
 #         print("welk nummer wil je verwijderen:")
 #         name = str(input())
 #         verwijderUitTabel("songs", name)
-  
+# 
 # print("Doei")
