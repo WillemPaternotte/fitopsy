@@ -7,6 +7,7 @@
 #
 ###------------------bibliotheek en globale variabelen--------------
 from tkinter import *
+from tkinter import font
 from tkinter.font import Font
 from pygame import mixer
 import SQL_fitopsy
@@ -14,6 +15,10 @@ import SQL_fitopsy
 venster = Tk()
 
 #--------opstarten---------------------#
+mainFont = Font(
+    family="Comic Sans MS",
+    size= 40,
+)
 venster.wm_title("fitopsy" )
 venster["bg"] = "white"
 venster.iconbitmap("fitopsy.ico")
@@ -27,7 +32,7 @@ def zoekKlant():
     print(gevonden_klanten)
 
 ###------------------Hoofdprogramma---------------------------------
-labelIntro = Label(venster,text="welkom" )
+labelIntro = Label(venster,text="welkom", font = mainFont )
 labelIntro.grid(row=0, column=0, sticky="W")
 
 labelklantnaam = Label(venster,text="klantnaam:" )
