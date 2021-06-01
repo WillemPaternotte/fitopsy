@@ -12,12 +12,17 @@ from tkinter.font import Font
 import pygame
 from pygame import mixer
 
+import tinytag
+
 import SQL_fitopsy
 
 venster = Tk()
 
 #--------opstarten---------------------#
+pygame.init()
 pygame.mixer.init()
+pygame.mixer.music.load("joji-rain-on-me-official.mp3")
+pygame.mixer.music.play()
 
 mainFont = Font(
     family="Comic Sans MS", #Het suprieure lettertype
