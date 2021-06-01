@@ -17,8 +17,8 @@ venster = Tk()
 
 #--------opstarten---------------------#
 mainFont = Font(
-    family="Comic Sans MS",
-    size= 40,
+    family="Comic Sans MS", #Het suprieure lettertype
+    size= 20,
     )
 venster.wm_title("fitopsy" )
 venster["bg"] = "white"
@@ -41,10 +41,10 @@ labelNummer.grid(row=1, column=0, sticky="W")
 
 ingevoerde_nummer = StringVar()
 entryNummer = Entry(venster, textvariable=ingevoerde_nummer)
-entryNummer.grid(row=1, column=1, sticky="w")
+entryNummer.grid(row=1, column=1, sticky="E")
 
 knopNummer = Button(venster, text="zoek nummer", width= 12, command=zoekNummer)
-knopNummer.grid(row=1,column=4,sticky="W")
+knopNummer.grid(row=1,column=4,sticky="E")
 
 knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
 knopSluit.grid(row=17, column=4)
