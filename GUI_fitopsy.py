@@ -9,6 +9,7 @@
 from tkinter import *
 from tkinter.font import Font
 
+import pygame
 from pygame import mixer
 
 import SQL_fitopsy
@@ -16,6 +17,8 @@ import SQL_fitopsy
 venster = Tk()
 
 #--------opstarten---------------------#
+pygame.mixer.init()
+
 mainFont = Font(
     family="Comic Sans MS", #Het suprieure lettertype
     size= 20,
@@ -31,6 +34,11 @@ venster.iconbitmap("fitopsy.ico")
 def zoekNummer():
     gevonden_nummer=SQL_fitopsy.getSongFromTable("songs", ingevoerde_nummer.get())
     print(gevonden_nummer)
+
+def speelNummer(nummer_id):
+    nummer_Locatie = SQL_fitopsy.getSongLocationFromTable("songs", nummer_id)
+    print(nummer_Locatie)
+
 
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
@@ -50,4 +58,5 @@ knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
 knopSluit.grid(row=17, column=4)
 
 venster.mainloop()
+
 

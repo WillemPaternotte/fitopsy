@@ -1,4 +1,5 @@
-import sqlite3 
+import sqlite3
+from tkinter.constants import CURRENT 
 with sqlite3.connect("DATA_fitopsy.db") as db:
     cursor = db.cursor()
 
@@ -91,6 +92,11 @@ def getSongFromTable(table, name):
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
 
+def getSongLocationFromTable(table, id):
+    cursor.execute("SELECT file_location FROM "+table+" WHERE song_id = ?;", (id,))
+    result = cursor.fetchone()
+    return(result)
+
 def getPlaylistFromTable(table, name):
     cursor.execute("SELECT playlist_id FROM "+table+" WHERE playlist_name = ?;", (name,))
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
@@ -110,51 +116,51 @@ def verwijderUitTabel(tabelnaam, titel):
 #     print("Boektitel aangepast van " +titeloud + " naar: "+ titelnieuw)
 
 ### HOOFDPROGRAMMA
-keuze = ""
-while not keuze == "STOP" :
-    print("1. Maak tabellen aan")
-    print("2. Vul tabbellen")
-    print("3. Toon alle tabellen")
-    print("4. Verwijder alle tabellen")
-    print("5. Nummer verwijderen")
-    print("STOP")
-    print("Geef je keuze: ")
-    keuze = input()
-    if keuze == "1":
-        makeTableSongs()
-        makeTableArtists()
-        makeTablePlaylists()
-        makeTableSongOnPlaylist()
-
-      
-    elif keuze == "2":
-        addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
-        addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
-        addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
-        addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
-        addPlaylist("vibes")
-        addPlaylist("sporten")
-        addPlaylist("slapen")
-        addSongOnPlaylist("runaway", "vibes")
-        addSongOnPlaylist("i wonder", "sporten")
-        addSongOnPlaylist("guccigang", "slapen")
-        addSongOnPlaylist("watermelonman", "sporten")
-      
-    elif keuze == "3":
-        gegevensUitTabelPrinten("songs")
-        gegevensUitTabelPrinten("artists")
-        gegevensUitTabelPrinten("playlists")
-        gegevensUitTabelPrinten("songs_on_playlists")
-      
-    elif keuze == "4":
-        verwijderTabel("songs")
-        verwijderTabel("artists")
-        verwijderTabel("playlists")
-        verwijderTabel("songs_on_playlists")
-        verwijderTabel("users")
-    elif keuze == "5":
-        print("welk nummer wil je verwijderen:")
-        name = str(input())
-        verwijderUitTabel("songs", name)
-
-print("Doei")
+# keuze = ""
+# while not keuze == "STOP" :
+#     print("1. Maak tabellen aan")
+#     print("2. Vul tabbellen")
+#     print("3. Toon alle tabellen")
+#     print("4. Verwijder alle tabellen")
+#     print("5. Nummer verwijderen")
+#     print("STOP")
+#     print("Geef je keuze: ")
+#     keuze = input()
+#     if keuze == "1":
+#         makeTableSongs()
+#         makeTableArtists()
+#         makeTablePlaylists()
+#         makeTableSongOnPlaylist()
+# 
+#       
+#     elif keuze == "2":
+#         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
+#         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
+#         addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
+#         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
+#         addPlaylist("vibes")
+#         addPlaylist("sporten")
+#         addPlaylist("slapen")
+#         addSongOnPlaylist("runaway", "vibes")
+#         addSongOnPlaylist("i wonder", "sporten")
+#         addSongOnPlaylist("guccigang", "slapen")
+#         addSongOnPlaylist("watermelonman", "sporten")
+#       
+#     elif keuze == "3":
+#         gegevensUitTabelPrinten("songs")
+#         gegevensUitTabelPrinten("artists")
+#         gegevensUitTabelPrinten("playlists")
+#         gegevensUitTabelPrinten("songs_on_playlists")
+#       
+#     elif keuze == "4":
+#         verwijderTabel("songs")
+#         verwijderTabel("artists")
+#         verwijderTabel("playlists")
+#         verwijderTabel("songs_on_playlists")
+#         verwijderTabel("users")
+#     elif keuze == "5":
+#         print("welk nummer wil je verwijderen:")
+#         name = str(input())
+#         verwijderUitTabel("songs", name)
+# 
+# print("Doei")
