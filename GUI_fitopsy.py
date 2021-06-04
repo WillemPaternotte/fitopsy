@@ -33,7 +33,7 @@ def zoekNummer():
 
 
 def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet handmatigf moet worden ingevuld
-    file_path = filedialog.askopenfilenames()
+    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("All files","*.*")))
 
     print(file_path) 
 
@@ -69,7 +69,7 @@ entryNummerToevoegen.grid(row=2, column=2, sticky="W")
 knopNummerToevoegen = Button(venster,text="voeg nummer toe", width=14, command=NummerToevoegen) #nummertoevoegen
 knopNummerToevoegen.grid(row=2, column=3, sticky="W")
 
-knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand kiezen
+knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
 knopBestand.grid(row=3, column=3, sticky="W")
 
 # place(relx=0.5, rely=0.5, anchor=CENTER)
