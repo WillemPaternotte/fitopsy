@@ -32,19 +32,16 @@ def zoekNummer():
     gevonden_nummer=SQL_fitopsy.getSongFromTable("songs", ingevoerde_nummer.get())
     print(gevonden_nummer)
 
-
-def BestandKiezen():
-    file_path = filedialog.askopenfilenames()
-
-    print(file_path)
-
 def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong()
 
-# filetypes = (
-#         ('text files', '*.txt'),
-#         ('All files', '*.*')
+filetypes = (
+        ('text files', '*.txt'),
+        ('All files', '*.*')
 
+def BestandKiezen():
+    file_path = filedialog.askopenfilenames
+    print(file_path)
 
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="F I T O P S Y", font = mainFont )
