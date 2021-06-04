@@ -6,10 +6,12 @@
 #
 #
 ###------------------bibliotheek en globale variabelen--------------
+
 from tkinter import *
 from tkinter.font import Font
 from tkinter import filedialog
 from pygame import mixer
+from tinytag import TinyTag #VOOR META DATA MP3 BESTANDEN
 
 import SQL_fitopsy
 
@@ -26,6 +28,10 @@ venster["bg"] = "white"
 venster.iconbitmap("fitopsy.ico")
 
 
+# tag = TinyTag.get("C:/Users/robin/Sync/leerjaar 5/informatica/SQL/music/Future, Drake - Life Is Good.mp3") 
+# tag = TinyTag.get('C:/Users/robin/Sync/leerjaar 5/informatica/SQL/music/Future, Drake - Life Is Good.mp3',) 
+
+
 ###------------------Functie defenities-----------------------------
 def zoekNummer():
     gevonden_nummer=SQL_fitopsy.getSongFromTable("songs", ingevoerde_nummer.get())
@@ -33,9 +39,12 @@ def zoekNummer():
 
 
 def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet handmatigf moet worden ingevuld
-    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("All files","*.*")))
+    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("flac files","*.flac"),("wav files","*.wav"),("All files","*.*")))
+    print(file_path)
 
-    print(file_path) 
+
+# tag = TinyTag.get("filePath")
+# print('This track is by %s.' % tag.artist)
 
 def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong()
@@ -71,6 +80,7 @@ knopNummerToevoegen.grid(row=2, column=3, sticky="W")
 
 knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
 knopBestand.grid(row=3, column=3, sticky="W")
+
 
 # place(relx=0.5, rely=0.5, anchor=CENTER)
 
