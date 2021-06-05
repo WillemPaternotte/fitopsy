@@ -87,8 +87,16 @@ def getArtistFromTable(table, name):
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
 
-def getSongFromTable(table, name):
-    cursor.execute("SELECT song_id FROM "+table+" WHERE song_name = ?;", (name,))
+def getArtistFromSong(id):
+    cursor.execute("""SELECT artists.artist_name FROM songs
+                        LEFT JOIN artists
+                        ON songs.artist_id = artists.artist_id
+                        WHERE songs.song_id = ?;""",(id,))
+    result = cursor.fetchone() # je wilt maar 1 rij met gegevens
+    return( result)
+#functies met songs
+def getSongIDFromTable(table, name):
+    cursor.execute("SELECT song_id FROM "+table+" WHERE UPPER(song_name) = ?;", (str.upper(name),))
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
 
@@ -97,6 +105,11 @@ def getSongLocationFromTable(table, id):
     result = cursor.fetchone()
     return(result)
 
+def getSongNameFromTable(id):
+    cursor.execute("SELECT song_name FROM songs WHERE song_id = ?;", (id,))
+    result = cursor.fetchone()
+    return(result)
+#
 def getPlaylistFromTable(table, name):
     cursor.execute("SELECT playlist_id FROM "+table+" WHERE playlist_name = ?;", (name,))
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
