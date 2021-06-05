@@ -31,27 +31,27 @@ venster.iconbitmap("fitopsy.ico")
 # tag = TinyTag.get("C:/Users/robin/Sync/leerjaar 5/informatica/SQL/music/Future, Drake - Life Is Good.mp3") 
 # tag = TinyTag.get('C:/Users/robin/Sync/leerjaar 5/informatica/SQL/music/Future, Drake - Life Is Good.mp3',) 
 
-
 ###------------------Functie defenities-----------------------------
 def zoekNummer():
     gevonden_nummer=SQL_fitopsy.getSongFromTable("songs", ingevoerde_nummer.get())
     print(gevonden_nummer)
 
-
 def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet handmatigf moet worden ingevuld
-    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("flac files","*.flac"),("wav files","*.wav"),("All files","*.*")))
+    global file_path
+    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("flac files","*.flac"),("wav files","*.wav"),("All files","*.*"))) #bepaalt welke bestandtypes gezein kunnen worden
     print(file_path)
+    return(file_path)
 
+# def metadata(file_path):
+#     tag = TinyTag.get("file_path")
+#     album = tag.album
+#     print(album)
 
-# tag = TinyTag.get("filePath")
-# print('This track is by %s.' % tag.artist)
+# filePath = BestandKiezen()
 
 def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong()
 
-# filetypes = (
-#         ('text files', '*.txt'),
-#         ('All files', '*.*')
 
 
 ###------------------Hoofdprogramma---------------------------------
@@ -81,6 +81,8 @@ knopNummerToevoegen.grid(row=2, column=3, sticky="W")
 knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
 knopBestand.grid(row=3, column=3, sticky="W")
 
+# knopBestand = Button(venster, text="zoek bestand", width= 14, command=lambda:[BestandKiezen(), metadata(file_path)]) #bestand
+# knopBestand.grid(row=3, column=3, sticky="W")
 
 # place(relx=0.5, rely=0.5, anchor=CENTER)
 
