@@ -13,17 +13,23 @@ from tkinter.font import Font
 import pygame
 from pygame import mixer
 
-import tinytag
+import datetime
+
+from tinytag import TinyTag
 
 import SQL_fitopsy
 
+
+
 venster = Tk()
 
+global playing 
+playing = ""
 #--------opstarten---------------------#
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.music.load("011_-_Town_Hall_Pelly.mp3")
-pygame.mixer.music.play()
+# pygame.mixer.music.load("011_-_Town_Hall_Pelly.mp3")
+# pygame.mixer.music.play()
 
 mainFont = Font(
     family="Comic Sans MS", #Het suprieure lettertype
@@ -34,8 +40,6 @@ venster.wm_title("fitopsy" )
 venster["bg"] = "white"
 venster.iconbitmap("fitopsy.ico")
 
-
-print(venster.winfo_width)
 
 ###------------------Functie defenities-----------------------------
 def zoekNummer():
@@ -49,19 +53,37 @@ def nummerMenu(id): #popup menu
 
     nummer_menu =  Menu(venster, tearoff= 0)
 
-    nummer_menu.add_command(label= nummer+" - "+artiest, command= lambda: nummerMenu(id))
+    nummer_menu.add_command(label= nummer+" - "+artiest, command= lambda: nummerMenu(id))#knop heropent popup, zo kan je een label toevoegen aan het menu
     nummer_menu.add_separator()
     nummer_menu.add_command(label="Speel Nummer af", command= lambda: speelNummer(id))
     nummer_menu.add_command(label="Voeg nummer toe aan wachtrij", command= lambda: addSongWachtrij(id))
+    #voeg hier meer commands toe
 
     nummer_menu.tk_popup(int(venster.winfo_width()*0.5), int(venster.winfo_height()*0.5) )
     
    
 def speelNummer(nummer_id):
     nummer_Locatie = SQL_fitopsy.getSongLocationFromTable("songs", nummer_id)
+    global playing
+    playing = nummer_Locatie[0]
     pygame.mixer.music.load(nummer_Locatie[0])
     pygame.mixer.music.play()
     # print(nummer_Locatie)
+
+def afspeelTijd(): #display afspeeltijd en wachtrij loop
+    if not(playing == ""):
+        huidige_tijd = datetime.timedelta(seconds = int(pygame.mixer.music.get_pos()/1000))
+        tag = TinyTag.get(playing) #tinytag initialisatie
+        totaal_tijd = int(tag.duration) #duration is sec
+        mooie_totaal_tijd = datetime.timedelta(seconds = totaal_tijd)
+        tijdLabel.configure(text= str(huidige_tijd) +" - "+str( mooie_totaal_tijd))
+
+        if int(pygame.mixer.music.get_pos()/1000) >= (totaal_tijd-1):#check voor volgende nummer in deze functie anders hebben we 2 loop functies en dat is minder efficient
+            volgendNummerWachtrij()
+            print("ja")
+
+    tijdLabel.after(1000,afspeelTijd)#loop iedere seconde
+
 
 def pausePlay():
     if pygame.mixer.music.get_busy() == True:
@@ -70,12 +92,19 @@ def pausePlay():
     else:
         pygame.mixer.music.unpause()
         knopPausePlay.configure(text="pause")
+        
 
 def addSongWachtrij(id):
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
     artiest = SQL_fitopsy.getArtistFromSong(id)[0]
     wachtrij.insert(END, nummer+" - "+artiest)
 
+def volgendNummerWachtrij():
+    nummer  = wachtrij.get(0) #0 is het eerste element uit de listbox
+    nummer = nummer.split(" -")
+    nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]
+    speelNummer(nummer_id)
+    wachtrij.delete(0)#verwijdert eerste element uit listbox 
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
 labelIntro.grid(row=0, column=0, sticky="W")
@@ -97,6 +126,9 @@ top.place(relx=0.5, y=0, anchor=N)
 knopPausePlay = Button(top, text="pause", width = 12, command=pausePlay)
 knopPausePlay.place(relx=0.5, y=4, anchor=N)
 
+tijdLabel = Label(top, text="0:00 - 0:00", width = 14)
+tijdLabel.place(relx = 0.5, y= 40, anchor=N)
+
 #wachtrij
 wachtrijFrame = Frame(top, width=30)
 wachtrijFrame.place(relx=0.95, y=60, anchor=E)
@@ -111,7 +143,7 @@ wachtrijLabel.place(relx=0.95, y=5, anchor=E)
 knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
 knopSluit.grid(row=17, column=4)
 
-
+afspeelTijd()
 venster.mainloop()
 
 
