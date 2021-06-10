@@ -7,6 +7,7 @@
 #
 ###------------------bibliotheek en globale variabelen--------------
 
+from os import name
 from tkinter import *
 from tkinter.font import Font
 from tkinter import filedialog
@@ -16,7 +17,7 @@ from tinytag import TinyTag #VOOR META DATA MP3 BESTANDEN
 import SQL_fitopsy
 
 venster = Tk()
-
+name = ""
 
 #--------opstarten---------------------#
 venster.geometry("600x600") #bepaalt grootte window
@@ -45,6 +46,7 @@ def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath n
     return(file_path)
 
 def metadata(file_path):
+    global name
     tag = TinyTag.get(file_path)
     name = tag.title
     artist = tag.artist
@@ -62,7 +64,9 @@ def nummerGegevens():
     popup["bg"] = "white"
     popup.iconbitmap("fitopsy.ico")
     popup.geometry("300x100")
-    # popup.wm_attributes('-type', 'splash')
+
+    labelNummer = Label(venster,bg ="White", textvariable=name)
+    labelNummer.grid(row=1, column=0, sticky="W")
 
     LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy) #nummertoevoegen
     LabelSluiten.place(relx= 0.5, rely= 0.8)
@@ -88,9 +92,6 @@ def nummerGegevens():
 
 def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong()
-
-
-
 
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="F I T O P S Y", font = mainFont ) #titel
