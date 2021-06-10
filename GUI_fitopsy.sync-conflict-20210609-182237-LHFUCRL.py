@@ -17,7 +17,6 @@ import SQL_fitopsy
 
 venster = Tk()
 
-
 #--------opstarten---------------------#
 venster.geometry("600x600") #bepaalt grootte window
 mainFont = Font(
@@ -39,56 +38,19 @@ def zoekNummer():
 
 def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet handmatigf moet worden ingevuld
     global file_path
-    file_path = StringVar()
-    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("FLAC files","*.flac"),("wav files","*.wav"),("All files","*.*"))) #bepaalt welke bestandtypes gezein kunnen worden
+    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("flac files","*.flac"),("wav files","*.wav"),("All files","*.*"))) #bepaalt welke bestandtypes gezein kunnen worden
     print(file_path)
     return(file_path)
 
 def metadata(file_path):
     tag = TinyTag.get(file_path)
-    name = tag.title
-    artist = tag.artist
-    genre = tag.genre
-    streams = 0
-
-    nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
-
-    nummerGegevens()
-    print(nieuw_nummer)
-
-def nummerGegevens():
-    popup = Tk()
-    popup.wm_title("fitopsy" )
-    popup["bg"] = "white"
-    popup.iconbitmap("fitopsy.ico")
-    popup.geometry("300x100")
-    # popup.wm_attributes('-type', 'splash')
-
-    LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy) #nummertoevoegen
-    LabelSluiten.place(relx= 0.5, rely= 0.8)
+    album = tag.album
+    print(album)
 
 # filePath = BestandKiezen()
-# tag.album         # album as string
-# tag.albumartist   # album artist as string
-# tag.artist        # artist name as string
-# tag.audio_offset  # number of bytes before audio data begins
-# tag.bitrate       # bitrate in kBits/s
-# tag.comment       # file comment as string
-# tag.composer      # composer as string 
-# tag.disc          # disc number
-# tag.disc_total    # the total number of discs
-# tag.duration      # duration of the song in seconds
-# tag.filesize      # file size in bytes
-# tag.genre         # genre as string
-# tag.samplerate    # samples per second
-# tag.title         # title of the song
-# tag.track         # track number as string
-# tag.track_total   # total number of tracks as string
-# tag.year          # year or data as string
 
 def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong()
-
 
 
 
@@ -106,19 +68,21 @@ entryNummer.grid(row=1, column=2, sticky="W")
 knopNummer = Button(venster, text="zoek nummer", width= 14, command=zoekNummer) #nummerzoeken
 knopNummer.grid(row=1, column=3, sticky="W")
 
+LabelNummerToevoegen = Label(venster,bg="white", text=" Nummer toevoegen:") #nummertoevoegen
+LabelNummerToevoegen.grid(row=2, column=0, sticky="W")
 
 NieuwNummer = StringVar()
 entryNummerToevoegen = Entry(venster, textvariable=NieuwNummer) #nummertoevoegen
 entryNummerToevoegen.grid(row=2, column=2, sticky="W")
 
-knopNummerToevoegen = Button(venster,text="voeg nummer toe", width=14, command=lambda:[BestandKiezen(), metadata(file_path[0])]) #nummertoevoegen
+knopNummerToevoegen = Button(venster,text="voeg nummer toe", width=14, command=NummerToevoegen) #nummertoevoegen
 knopNummerToevoegen.grid(row=2, column=3, sticky="W")
 
 # knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
 # knopBestand.grid(row=3, column=3, sticky="W")
 
-# knopBestand = Button(venster, text="zoek bestand", width= 14, command=lambda:[BestandKiezen(), metadata(file_path[0])]) #bestand
-# knopBestand.grid(row=3, column=3, sticky="W")
+knopBestand = Button(venster, text="zoek bestand", width= 14, command=lambda:[BestandKiezen(), metadata(file_path)]) #bestand
+knopBestand.grid(row=3, column=3, sticky="W")
 
 # place(relx=0.5, rely=0.5, anchor=CENTER)
 

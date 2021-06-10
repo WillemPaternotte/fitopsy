@@ -43,7 +43,7 @@ def addSong(name, artist, genre, file_location, streams):
 
     cursor.execute("INSERT INTO songs VALUES (NULL, ?, ?, ?, ?, ?) ", (name, artist_id, genre, file_location, streams))
     cursor.execute("COMMIT")
-    print("nummer toegevoeg")
+    print("nummer toegevoegd")
 
 def addArtist(artist):
     cursor.execute("INSERT INTO artists VALUES (NULL, ? ) ", (artist, ))
@@ -109,7 +109,7 @@ def verwijderUitTabel(tabelnaam, titel):
 #     cursor.execute("UPDATE " + tabelnaam + " SET Titel = ' "+ titelnieuw + "' WHERE BoekID = ?", (id_om_aantepassen,) )
 #     print("Boektitel aangepast van " +titeloud + " naar: "+ titelnieuw)
 
-### HOOFDPROGRAMMA
+## HOOFDPROGRAMMA
 # keuze = ""
 # while not keuze == "STOP" :
 #     print("1. Maak tabellen aan")
@@ -128,10 +128,10 @@ def verwijderUitTabel(tabelnaam, titel):
 
       
 #     elif keuze == "2":
-#         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
-#         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
-#         addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
-#         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
+#         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3")
+#         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3")
+#         addSong("i wonder", "kanye", "hiphop", "aewq.mp3")
+#         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3")
 #         addPlaylist("vibes")
 #         addPlaylist("sporten")
 #         addPlaylist("slapen")
