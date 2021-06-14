@@ -6,6 +6,7 @@
 #
 #
 ###------------------bibliotheek en globale variabelen--------------
+
 from tkinter import *
 import tkinter
 from tkinter.font import Font
@@ -28,8 +29,7 @@ playing = ""
 #--------opstarten---------------------#
 pygame.init()
 pygame.mixer.init()
-# pygame.mixer.music.load("011_-_Town_Hall_Pelly.mp3")
-# pygame.mixer.music.play()
+
 
 mainFont = Font(
     family="Comic Sans MS", #Het suprieure lettertype
@@ -100,11 +100,15 @@ def addSongWachtrij(id):
     wachtrij.insert(END, nummer+" - "+artiest)
 
 def volgendNummerWachtrij():
-    nummer  = wachtrij.get(0) #0 is het eerste element uit de listbox
-    nummer = nummer.split(" -")
-    nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]
-    speelNummer(nummer_id)
-    wachtrij.delete(0)#verwijdert eerste element uit listbox 
+    nummer = wachtrij.get(0) #0 is het eerste element uit de listbox
+    if nummer != "":#nummer is niet None maar heeft ook geen data dus lege string
+        nummer = nummer.split(" -")
+        nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]
+        speelNummer(nummer_id)
+        wachtrij.delete(0)#verwijdert eerste element uit listbox 
+    else:
+        pygame.mixer.music.stop()
+        tijdLabel.configure(text="0:00 - 0:00")
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
 labelIntro.grid(row=0, column=0, sticky="W")
@@ -125,6 +129,9 @@ top.place(relx=0.5, y=0, anchor=N)
 
 knopPausePlay = Button(top, text="pause", width = 12, command=pausePlay)
 knopPausePlay.place(relx=0.5, y=4, anchor=N)
+
+knopVolgende = Button(top, text = "next", width=12, command= volgendNummerWachtrij)
+knopVolgende.place(relx=0.5, y=70, anchor=N)
 
 tijdLabel = Label(top, text="0:00 - 0:00", width = 14)
 tijdLabel.place(relx = 0.5, y= 40, anchor=N)
