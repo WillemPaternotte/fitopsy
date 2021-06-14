@@ -43,9 +43,26 @@ venster.iconbitmap("fitopsy.ico")
 
 ###------------------Functie defenities-----------------------------
 def zoekNummer():
-    gevonden_nummer= SQL_fitopsy.getSongIDFromTable("songs", ingevoerde_nummer.get())[0]
+    zoekResultaten.delete(0, END)
+    IDs = SQL_fitopsy.getSongIDsFromTable("songs", ingevoerde_nummer.get())#meerdere resultaten
+    for id in IDs:#meerdere resultaten in listbox stoppen
+        print(id)
+        nummer = SQL_fitopsy.getSongNameFromTable(id[0])[0]
+        artiest = SQL_fitopsy.getArtistFromSong(id[0])[0]
+        zoekResultaten.insert(END, nummer+" - "+artiest)
 
-    nummerMenu(gevonden_nummer)
+
+def selecteren(event):#activeert popu bij selectie in list box
+    selection = event.widget.curselection()
+    if selection:
+        index = selection[0]
+        nummer = event.widget.get(index)
+        nummer = nummer.split(" -")
+        nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]
+        nummerMenu(nummer_id)
+    
+
+
 
 def nummerMenu(id): #popup menu
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
@@ -109,19 +126,36 @@ def volgendNummerWachtrij():
     else:
         pygame.mixer.music.stop()
         tijdLabel.configure(text="0:00 - 0:00")
+
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
 labelIntro.grid(row=0, column=0, sticky="W")
 
-labelNummer = Label(venster,text="nummer:" )
-labelNummer.grid(row=1, column=0, sticky="W")
+zoeken =Frame(venster, bg="grey", width=400, height= 400)
+zoeken.place(relx= 0.5, y =105,anchor= N)
+
+#zoeken
+labelNummer = Label(zoeken,text="nummer:", width =12 )
+labelNummer.place(relx = 0, y=0, anchor= NW)
 
 ingevoerde_nummer = StringVar()
-entryNummer = Entry(venster, textvariable=ingevoerde_nummer)
-entryNummer.grid(row=1, column=1, sticky="E")
+entryNummer = Entry(zoeken, textvariable=ingevoerde_nummer)
+entryNummer.place(relx= 0.5, y = 0, anchor= N)
 
-knopNummer = Button(venster, text="zoek nummer", width= 12, command=zoekNummer)
-knopNummer.grid(row=1,column=4,sticky="W")
+knopNummer = Button(zoeken, text="zoek nummer", width= 12, command=zoekNummer)
+knopNummer.place(relx = 1, y = 0, anchor = NE )
+
+#resultaten lsibox
+resultatenFrame = Frame(zoeken, width=30, height=50)
+resultatenFrame.place(relx=0.5, y=30, anchor=N)
+
+zoekResultaten =  Listbox(resultatenFrame, bg="grey", width=20, height=5)
+zoekResultaten.pack(padx=5, pady=19)
+resultatenLabel =  Label(resultatenFrame, text="resultaten:", width=17,)
+resultatenLabel.place(relx=0.5, rely=0.1, anchor=CENTER)
+
+zoekResultaten.bind("<<ListboxSelect>>", selecteren)
+
 
 ##BOVEN BALK
 top = Frame(venster, bg="grey", width=400, height= 100)
@@ -147,8 +181,8 @@ wachtrijLabel.place(relx=0.95, y=5, anchor=E)
 
 
 
-knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
-knopSluit.grid(row=17, column=4)
+# knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
+# knopSluit.grid(row=17, column=4)
 
 afspeelTijd()
 venster.mainloop()
