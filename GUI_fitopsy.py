@@ -26,6 +26,8 @@ venster = Tk()
 
 global playing 
 playing = ""
+global playlistVensterActive
+playlistvensterActive = False
 #--------opstarten---------------------#
 pygame.init()
 pygame.mixer.init()
@@ -133,6 +135,25 @@ def volgendNummerWachtrij():
         pygame.mixer.music.stop()
         tijdLabel.configure(text="0:00 - 0:00")
 
+def playlistAanmaken():
+    global playlistvensterActive
+    running = playlistvensterActive
+    if running != True:
+        playlistVenster = Tk()
+        playlistVenster.wm_title("fitopsy" )
+        playlistVenster["bg"] = "white"
+        playlistVenster.iconbitmap("fitopsy.ico")
+        playlistVenster.protocol("WM_DELETE_WINDOW", lambda: (playlistWindowDelete(), playlistVenster.destroy()))
+        running = True
+    playlistvensterActive = running
+
+def playlistWindowDelete(): #global variabele update moest appart want python deed stom
+    global playlistvensterActive
+    playlistvensterActive = False
+    
+    
+
+
 ###------------------Hoofdprogramma---------------------------------
 labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
 labelIntro.grid(row=0, column=0, sticky="W")
@@ -162,9 +183,15 @@ resultatenLabel.place(relx=0.5, rely=0.1, anchor=CENTER)
 
 zoekResultaten.bind("<<ListboxSelect>>", selecteren)
 
+#PLAYLIST
+playlistFrame = Frame(venster, bg="grey", width=200, height=900)
+playlistFrame.place(relx= 1, y = 0, anchor= NE)
 
+playlistLabel = Label(playlistFrame, text="Mijn Playlists:", width= 12)
+playlistLabel.place(relx= 0.5, y= 20, anchor=N)
 
-
+playlistToevoegenKnop = Button(playlistFrame, text="maak nieuwe playlist", width= 20, command= lambda:playlistAanmaken())
+playlistToevoegenKnop.place(relx= 0.5, y = 40, anchor=N)
 ##BOVEN BALK
 top = Frame(venster, bg="grey", width=400, height= 100)
 top.place(relx=0.5, y=0, anchor=N)
