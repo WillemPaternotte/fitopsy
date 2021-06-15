@@ -44,9 +44,12 @@ venster.iconbitmap("fitopsy.ico")
 ###------------------Functie defenities-----------------------------
 def zoekNummer():
     zoekResultaten.delete(0, END)
-    IDs = SQL_fitopsy.getSongIDsFromTable("songs", ingevoerde_nummer.get())#meerdere resultaten
+    nummerResultaten = SQL_fitopsy.getSongIDsFromTable("songs", ingevoerde_nummer.get())#meerdere resultaten
+    artiestResultaten = SQL_fitopsy.getSongIDsFromArtists(ingevoerde_nummer.get())
+    IDs = nummerResultaten+artiestResultaten
+    IDs = list(dict.fromkeys(IDs))
+    print(IDs)
     for id in IDs:#meerdere resultaten in listbox stoppen
-        print(id)
         nummer = SQL_fitopsy.getSongNameFromTable(id[0])[0]
         artiest = SQL_fitopsy.getArtistFromSong(id[0])[0]
         zoekResultaten.insert(END, nummer+" - "+artiest)
@@ -76,7 +79,10 @@ def nummerMenu(id): #popup menu
     nummer_menu.add_command(label="Voeg nummer toe aan wachtrij", command= lambda: addSongWachtrij(id))
     #voeg hier meer commands toe
 
-    nummer_menu.tk_popup(int(venster.winfo_width()*0.5), int(venster.winfo_height()*0.5) )
+
+    x = venster.winfo_pointerx() - venster.winfo_vrootx()
+    y = venster.winfo_pointery() - venster.winfo_vrooty()
+    nummer_menu.tk_popup(x, y )
     
    
 def speelNummer(nummer_id):
@@ -134,8 +140,8 @@ labelIntro.grid(row=0, column=0, sticky="W")
 zoeken =Frame(venster, bg="grey", width=400, height= 400)
 zoeken.place(relx= 0.5, y =105,anchor= N)
 
-#zoeken
-labelNummer = Label(zoeken,text="nummer:", width =12 )
+##ZOEKEN--
+labelNummer = Label(zoeken,text="zoeken:", width =12 )
 labelNummer.place(relx = 0, y=0, anchor= NW)
 
 ingevoerde_nummer = StringVar()
@@ -145,16 +151,18 @@ entryNummer.place(relx= 0.5, y = 0, anchor= N)
 knopNummer = Button(zoeken, text="zoek nummer", width= 12, command=zoekNummer)
 knopNummer.place(relx = 1, y = 0, anchor = NE )
 
-#resultaten lsibox
+#resultaten listbox
 resultatenFrame = Frame(zoeken, width=30, height=50)
 resultatenFrame.place(relx=0.5, y=30, anchor=N)
 
-zoekResultaten =  Listbox(resultatenFrame, bg="grey", width=20, height=5)
+zoekResultaten =  Listbox(resultatenFrame, bg="grey", width=30, height=5)
 zoekResultaten.pack(padx=5, pady=19)
 resultatenLabel =  Label(resultatenFrame, text="resultaten:", width=17,)
 resultatenLabel.place(relx=0.5, rely=0.1, anchor=CENTER)
 
 zoekResultaten.bind("<<ListboxSelect>>", selecteren)
+
+
 
 
 ##BOVEN BALK

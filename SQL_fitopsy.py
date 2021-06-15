@@ -105,6 +105,15 @@ def getSongIDsFromTable(table, name):#meerdere resultaten
     result = cursor.fetchall() 
     return( result)
 
+def getSongIDsFromArtists(name):
+    cursor.execute("""SELECT song_id
+                        FROM songs
+                        Left join artists
+                        On songs.artist_id = artists.artist_id
+                        WHERE UPPER(artists.artist_name) LIKE ?;""", ("%"+str.upper(name)+"%",))#like stamentent staat niet volledig uit typen toe
+    result = cursor.fetchall() 
+    return( result)
+
 def getSongLocationFromTable(table, id):
     cursor.execute("SELECT file_location FROM "+table+" WHERE song_id = ?;", (id,))
     result = cursor.fetchone()
