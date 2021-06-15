@@ -46,7 +46,7 @@ def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath n
     return(file_path)
 
 def metadata(file_path):
-    global name
+    
     tag = TinyTag.get(file_path)
     name = tag.title
     artist = tag.artist
@@ -65,11 +65,35 @@ def nummerGegevens():
     popup.iconbitmap("fitopsy.ico")
     popup.geometry("300x100")
 
-    labelNummer = Label(venster,bg ="White", textvariable=name)
+    labelNummer = Label(popup,bg ="White", textvariable=name)
     labelNummer.grid(row=1, column=0, sticky="W")
 
-    LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy) #nummertoevoegen
+    LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy)
     LabelSluiten.place(relx= 0.5, rely= 0.8)
+
+def HandmatigToevoegen():
+    popup = Tk()
+    popup.wm_title("fitopsy" )
+    popup["bg"] = "white"
+    popup.iconbitmap("fitopsy.ico")
+    popup.geometry("300x100")
+
+    labelName = Label(popup,bg ="White", text="Titel:" )
+    labelName.grid(row=0, column=0, sticky="W")
+    
+    ingevoerde_name = StringVar()
+    entryName = Entry(popup, textvariable=ingevoerde_name)
+    entryName.grid(row=0, column=1, sticky="W")
+
+    labelArtist = Label(popup,bg ="White", text="Artiest:" )
+    labelArtist.grid(row=1, column=0, sticky="W")
+    
+    ingevoerde_artist = StringVar()
+    entryArtist = Entry(popup, textvariable=ingevoerde_artist)
+    entryArtist.grid(row=1, column=1, sticky="W")
+
+    LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy)
+    LabelSluiten.place(relx=0.5,rely=0.8)
 
 # filePath = BestandKiezen()
 # tag.album         # album as string
@@ -94,26 +118,28 @@ def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong()
 
 ###------------------Hoofdprogramma---------------------------------
-labelIntro = Label(venster,bg = "white", text="F I T O P S Y", font = mainFont ) #titel
+labelIntro = Label(venster,bg = "white", text="F I T O P S Y", font = mainFont )
 labelIntro.grid(row=0,column=0, sticky="w")
 
-labelNummer = Label(venster,bg ="White", text="nummer:" ) #nummerzoeken
+labelNummer = Label(venster,bg ="White", text="nummer:" )
 labelNummer.grid(row=1, column=0, sticky="W")
 
 ingevoerde_nummer = StringVar()
-entryNummer = Entry(venster, textvariable=ingevoerde_nummer) #nummerzoeken
+entryNummer = Entry(venster, textvariable=ingevoerde_nummer)
 entryNummer.grid(row=1, column=2, sticky="W")
 
-knopNummer = Button(venster, text="zoek nummer", width= 14, command=zoekNummer) #nummerzoeken
+knopNummer = Button(venster, text="zoek nummer", width= 15, command=zoekNummer)
 knopNummer.grid(row=1, column=3, sticky="W")
 
-
 NieuwNummer = StringVar()
-entryNummerToevoegen = Entry(venster, textvariable=NieuwNummer) #nummertoevoegen
+entryNummerToevoegen = Entry(venster, textvariable=NieuwNummer)
 entryNummerToevoegen.grid(row=2, column=2, sticky="W")
 
-knopNummerToevoegen = Button(venster,text="voeg nummer toe", width=14, command=lambda:[BestandKiezen(), metadata(file_path[0])]) #nummertoevoegen
+knopNummerToevoegen = Button(venster,text="voeg nummer toe", width=15, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
 knopNummerToevoegen.grid(row=2, column=3, sticky="W")
+
+knopNummerHandmatigToevoegen = Button(venster,text="Handmatig toevoegen", width=15, command=lambda: HandmatigToevoegen()) 
+knopNummerHandmatigToevoegen.grid(row=3, column=3, sticky="W")
 
 # knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
 # knopBestand.grid(row=3, column=3, sticky="W")
@@ -130,4 +156,5 @@ knopNummerToevoegen.grid(row=2, column=3, sticky="W")
 # knopNummer.grid(row=2,column=4,sticky="W")
 
 venster.mainloop()
+
 
