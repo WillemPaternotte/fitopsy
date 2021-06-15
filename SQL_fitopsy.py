@@ -96,8 +96,22 @@ def getArtistFromSong(id):
     return( result)
 #functies met songs
 def getSongIDFromTable(table, name):
-    cursor.execute("SELECT song_id FROM "+table+" WHERE UPPER(song_name) = ?;", (str.upper(name),))
+    cursor.execute("SELECT song_id FROM "+table+" WHERE UPPER(song_name) LIKE ?;", ("%"+str.upper(name)+"%",))#like stamentent staat niet volledig uit typen toe
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
+    return( result)
+
+def getSongIDsFromTable(table, name):#meerdere resultaten
+    cursor.execute("SELECT song_id FROM "+table+" WHERE UPPER(song_name) LIKE ?;", ("%"+str.upper(name)+"%",))#like stamentent staat niet volledig uit typen toe
+    result = cursor.fetchall() 
+    return( result)
+
+def getSongIDsFromArtists(name):
+    cursor.execute("""SELECT song_id
+                        FROM songs
+                        Left join artists
+                        On songs.artist_id = artists.artist_id
+                        WHERE UPPER(artists.artist_name) LIKE ?;""", ("%"+str.upper(name)+"%",))#like stamentent staat niet volledig uit typen toe
+    result = cursor.fetchall() 
     return( result)
 
 def getSongLocationFromTable(table, id):
@@ -118,7 +132,7 @@ def getPlaylistFromTable(table, name):
 
 # Verdwijderd een gegegeven uit een tabel, door eerst ID (primary key) op te zoeken en dan alle gegevens van die primary key te verwijderen
 def verwijderUitTabel(tabelnaam, titel):
-    id_om_te_verwijderen = getSongFromTable(tabelnaam, titel)[0] # eerst de ID opzoeken dat bij titel hoort
+    id_om_te_verwijderen = getSongLocationFromTable(tabelnaam, titel)[0] # eerst de ID opzoeken dat bij titel hoort
     cursor.execute("DELETE FROM " + tabelnaam + " WHERE song_id = ?", ( str(id_om_te_verwijderen),) )
     print("Nummer met titel " + titel +" verwijderd uit tabel: "+ tabelnaam)
 
