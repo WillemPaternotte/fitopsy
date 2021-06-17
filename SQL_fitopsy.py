@@ -57,8 +57,8 @@ def addPlaylist(name):
     print("Playlist aangemaakt") 
 
 def addSongOnPlaylist(song, playlist):
-    song_id = int(getSongFromTable("songs", song)[0])
-    playlist_id = int(getPlaylistFromTable("playlists", playlist)[0])
+    song_id = int(getSongIDFromTable("songs", song)[0])
+    playlist_id = int(getPlaylistFromTable(playlist)[0])
     cursor.execute("INSERT INTO songs_on_playlists VALUES(NULL,?,?)",(song_id, playlist_id))
     cursor.execute("COMMIT")
     print("nummer toegevoegd aan playlist")
@@ -105,6 +105,15 @@ def getSongIDsFromTable(table, name):#meerdere resultaten
     result = cursor.fetchall() 
     return( result)
 
+def getSongIDsFromPlaylist(playlist):
+    cursor.execute("""SELECT songs_on_playlists.song_id
+                    FROM songs_on_playlists
+                    LEFT JOIN playlists
+                    ON songs_on_playlists.playlist_id = playlists.playlist_id
+                    WHERE playlists.playlist_name = ?""", (playlist,))
+    result = cursor.fetchall() 
+    return( result)                
+
 def getSongIDsFromArtists(name):
     cursor.execute("""SELECT song_id
                         FROM songs
@@ -124,10 +133,15 @@ def getSongNameFromTable(id):
     result = cursor.fetchone()
     return(result)
 #
-def getPlaylistFromTable(table, name):
-    cursor.execute("SELECT playlist_id FROM "+table+" WHERE playlist_name = ?;", (name,))
+def getPlaylistFromTable(name):
+    cursor.execute("SELECT playlist_id FROM playlists WHERE playlist_name = ?;", (name,))
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
+
+def getAllPlaylists():
+    cursor.execute("SELECT playlist_name FROM playlists")
+    result = cursor.fetchall()
+    return(result)
 
 
 # Verdwijderd een gegegeven uit een tabel, door eerst ID (primary key) op te zoeken en dan alle gegevens van die primary key te verwijderen
@@ -142,7 +156,7 @@ def verwijderUitTabel(tabelnaam, titel):
 #     cursor.execute("UPDATE " + tabelnaam + " SET Titel = ' "+ titelnieuw + "' WHERE BoekID = ?", (id_om_aantepassen,) )
 #     print("Boektitel aangepast van " +titeloud + " naar: "+ titelnieuw)
 
-### HOOFDPROGRAMMA
+# ## HOOFDPROGRAMMA
 # keuze = ""
 # while not keuze == "STOP" :
 #     print("1. Maak tabellen aan")
