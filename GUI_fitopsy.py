@@ -88,7 +88,6 @@ def NummerToevoegen():
     file_path = ingevoerde_file_path.get()
     print("name::",name)
     nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
-    print(f"{name =}")
 
 #------------------Popup-scherm voor handmatig toevoegen---------------------------------
 
@@ -124,15 +123,17 @@ def HandmatigToevoegen():
     entryArtist = Entry(popup, textvariable=ingevoerde_artist)
     entryArtist.grid(row=1, column=1, sticky="W")
 
+    # opslaanKnop = PhotoImage(file="opslaanKnop.png")
+    # img_label= Label(image=opslaanKnop)
+    # LabelSluiten = Button(popup, image=opslaanKnop, command=NummerToevoegen,\
+    # borderwidth=0)
+    # LabelSluiten.pack(pady=1
+
     LabelSluiten = Button(popup,bg="white", text=" opslaan ", command=NummerToevoegen)
     LabelSluiten.place(relx=0.5,rely=0.8)
 
     labelGenre = Label(popup,bg ="White", text="Genre:" )
     labelGenre.grid(row=2, column=0, sticky="W")
-
-    # ingevoerde_genre = StringVar()
-    # entryGenre = Entry(popup, textvariable=ingevoerde_genre)
-    # entryGenre.grid(row=2, column=1, sticky="W")
 
     labelFilepath = Label(popup,bg ="White", text="Filepath:" )
     labelFilepath.grid(row=3, column=0, sticky="W")

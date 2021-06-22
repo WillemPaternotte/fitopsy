@@ -103,13 +103,13 @@ def verwijderUitTabel(tabelnaam, titel):
     cursor.execute("DELETE FROM " + tabelnaam + " WHERE song_id = ?", ( str(id_om_te_verwijderen),) )
     print("Nummer met titel " + titel +" verwijderd uit tabel: "+ tabelnaam)
 
-# # #Pas een bepaalde gegeven aan in een tabel
+# #Pas een bepaalde gegeven aan in een tabel
 # def pasAanInTabel(tabelnaam, titeloud, titelnieuw):
 #     id_om_aantepassen = getBoekIDUitTabel(tabelnaam, titeloud) #eerst ID opzoeken dat bij titel hoort
 #     cursor.execute("UPDATE " + tabelnaam + " SET Titel = ' "+ titelnieuw + "' WHERE BoekID = ?", (id_om_aantepassen,) )
 #     print("Boektitel aangepast van " +titeloud + " naar: "+ titelnieuw)
 
-# # HOOFDPROGRAMMA
+# ## HOOFDPROGRAMMA
 # keuze = ""
 # while not keuze == "STOP" :
 #     print("1. Maak tabellen aan")
@@ -128,10 +128,10 @@ def verwijderUitTabel(tabelnaam, titel):
 
       
 #     elif keuze == "2":
-#         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3")
-#         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3")
-#         addSong("i wonder", "kanye", "hiphop", "aewq.mp3")
-#         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3")
+#         addSong("guccigang", "lil pump", "hiphop", "aewq.mp3", 7980)
+#         addSong("runaway", "kanye", "hiphop", "a452afsaq.mp3", 70870)
+#         addSong("i wonder", "kanye", "hiphop", "aewq.mp3", 798086)
+#         addSong("watermelonman", "Herbie Hancock", "jazz", "opq.mp3", 923)
 #         addPlaylist("vibes")
 #         addPlaylist("sporten")
 #         addPlaylist("slapen")
