@@ -17,14 +17,11 @@ import tkinter as tk # voor popup scherm check
 
 import SQL_fitopsy
 
-# ingevoerde_artist = StringVar()
-# ingevoerde_genre = StringVar()
-# ingevoerde_name = StringVar()
+#globale variabele voor het handmatig invoeren
+ingevoerde_name = ""
+ingevoerde_artist = ""
 venster = Tk()
-name = ""
-artist = ""
-genre= ""
-file_path = ""
+
 
 
 #--------opstarten---------------------#
@@ -91,7 +88,7 @@ def NummerToevoegen():
 #------------------Popup-scherm voor handmatig toevoegen---------------------------------
 
 def HandmatigToevoegen():
-    global name
+    global ingevoerde_name
     popup = Toplevel(venster)
     # popup = Tk()
     popup.wm_title("fitopsy" )
