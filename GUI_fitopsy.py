@@ -20,6 +20,9 @@ import SQL_fitopsy
 #globale variabele voor het handmatig invoeren
 ingevoerde_name = ""
 ingevoerde_artist = ""
+ingevoerde_genre = ""
+ingevoerde_file_path = ""
+
 venster = Tk()
 
 
@@ -80,8 +83,10 @@ def nummerGegevens():
 
 def NummerToevoegen():
     name = ingevoerde_name.get()
+    artist = ingevoerde_artist.get()
+    genre = ingevoerde_genre.get()
+    file_path = ingevoerde_file_path.get()
     print("name::",name)
-    print("name",name)
     nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
     print(f"{name =}")
 
@@ -89,6 +94,10 @@ def NummerToevoegen():
 
 def HandmatigToevoegen():
     global ingevoerde_name
+    global ingevoerde_artist
+    global ingevoerde_genre
+    global ingevoerde_file_path
+
     popup = Toplevel(venster)
     # popup = Tk()
     popup.wm_title("fitopsy" )
