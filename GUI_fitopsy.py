@@ -56,7 +56,6 @@ def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath n
     return(file_path)
 
 def metadata(file_path):
-
     tag = TinyTag.get(file_path)
 
     name = tag.title
