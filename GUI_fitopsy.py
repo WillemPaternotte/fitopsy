@@ -105,7 +105,10 @@ def HandmatigToevoegen():
     popup.iconbitmap("fitopsy.ico")
     popup.geometry("300x150")
 
-    # global ingevoerde_name
+    ingevoerde_genre = StringVar()
+    ingevoerde_genre.set("Hiphop") #keuzemenu voor genres
+    entryGenre = OptionMenu(popup, ingevoerde_genre, "Hiphop","Rock","Pop","Klassiek","K-pop","Jazz","Disoc", "Electro","Alternatief" )
+    entryGenre.grid(row=2, column=1, sticky="W")
 
     labelName = Label(popup,bg ="White", text="Titel:" )
     labelName.grid(row=0, column=0, sticky="W")
@@ -127,9 +130,9 @@ def HandmatigToevoegen():
     labelGenre = Label(popup,bg ="White", text="Genre:" )
     labelGenre.grid(row=2, column=0, sticky="W")
 
-    ingevoerde_genre = StringVar()
-    entryGenre = Entry(popup, textvariable=ingevoerde_genre)
-    entryGenre.grid(row=2, column=1, sticky="W")
+    # ingevoerde_genre = StringVar()
+    # entryGenre = Entry(popup, textvariable=ingevoerde_genre)
+    # entryGenre.grid(row=2, column=1, sticky="W")
 
     labelFilepath = Label(popup,bg ="White", text="Filepath:" )
     labelFilepath.grid(row=3, column=0, sticky="W")
@@ -140,6 +143,7 @@ def HandmatigToevoegen():
 
 
 #------------------Hoofdprogramma---------------------------------
+
 labelIntro = Label(venster,bg = "white", text="F I T O P S Y", font = mainFont )
 labelIntro.grid(row=0,column=0, sticky="w")
 
@@ -153,14 +157,14 @@ entryNummer.grid(row=1, column=2, sticky="W")
 knopNummer = Button(venster, text="zoek nummer", width= 15, command=zoekNummer)
 knopNummer.grid(row=1, column=3, sticky="W")
 
-NieuwNummer = StringVar()
-entryNummerToevoegen = Entry(venster, textvariable=NieuwNummer)
-entryNummerToevoegen.grid(row=2, column=2, sticky="W")
+# NieuwNummer = StringVar()
+# entryNummerToevoegen = Entry(venster, textvariable=NieuwNummer)
+# entryNummerToevoegen.grid(row=2, column=2, sticky="W")
 
-knopNummerToevoegen = Button(venster,text="voeg nummer toe", width=15, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
+knopNummerToevoegen = Button(venster,text="nummer toevoegen met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
 knopNummerToevoegen.grid(row=2, column=3, sticky="W")
 
-knopNummerHandmatigToevoegen = Button(venster,text="Handmatig toevoegen", width=15, command=lambda: HandmatigToevoegen()) 
+knopNummerHandmatigToevoegen = Button(venster,text="Nummer toevoegen zonder metadata", width=20, command=lambda: HandmatigToevoegen()) 
 knopNummerHandmatigToevoegen.grid(row=3, column=3, sticky="W")
 
 # knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
