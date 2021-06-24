@@ -170,14 +170,14 @@ def volgendNummerWachtrij():
 #playlist functies
 def playlistListboxVullen(resulutaten):#voegt alle playlist toe aan listbox playlist
     for resultaat in resulutaten:
-        playlistListbox.insert(END, resultaat)
+        playlistListbox.insert(END, resultaat[0])#resultaat is tuple
         
 def selecterenPlaylist(event):#activeert popup bij selectie in list box voor playlist
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         playlist = event.widget.get(index)
-        playlistMenu(playlist[0])
+        playlistMenu(playlist)
         
 def playlistMenu(playlist):# menu voor opites playlist
     playlist_menu =  Menu(venster, tearoff= 0)
@@ -205,13 +205,13 @@ def addSongPlaylistMenu(id, x,y):#popup voor als je een nummer aan een playlist 
     
     addSongPlaylist_menu =  Menu(venster, tearoff= 0)
 
-    addSongPlaylist_menu.add_command(label= nummer+" - "+artiest, command= lambda: addSongPlaylistMenu(id))#knop heropent popup, zo kan je een label toevoegen aan het menu
+    addSongPlaylist_menu.add_command(label= nummer+" - "+artiest, command= lambda: addSongPlaylistMenu(id, x, y))#knop heropent popup, zo kan je een label toevoegen aan het menu
     addSongPlaylist_menu.add_separator()
     playlists = Menu(venster, tearoff= 0)
     addSongPlaylist_menu.add_cascade(label = "selecteer playlist", menu= playlists)
     allPlaylists = SQL_fitopsy.getAllPlaylists()
     for playlist in allPlaylists:#maakt voor elke playlist een menu knop aan
-        playlists.add_command(label = playlist, command=lambda: addSongPlaylist(nummer, playlist))
+        playlists.add_command(label = playlist[0], command=lambda: addSongPlaylist(nummer, playlist))
 
 
     addSongPlaylist_menu.tk_popup(x, y )
