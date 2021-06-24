@@ -17,7 +17,7 @@ from tkinter import filedialog
 import pygame 
 from pygame import Color, mixer
 
-from tinytag import TinyTag #VOOR META DATA MP3 BESTANDEN
+from tinytag import TinyTag # voor meta data uit bestand halen
 import tkinter as tk # voor popup scherm check
 
 import datetime
@@ -55,7 +55,7 @@ venster.wm_title("fitopsy" )
 venster["bg"] = "#1ED760"
 venster.iconbitmap("fitopsy.ico")
 
-green = "#1ED760"
+green = "#1DB954"
 black = "#F0F0F0"
 # black = "#191414"
 
@@ -68,8 +68,20 @@ album = ""
 bitrate = 0
 year = 0
 
+#globale variabele voor het handmatig invoeren van gegevens
+ingevoerde_artist = ""
+ingevoerde_genre = ""
+ingevoerde_file_path= ""
+ingevoerde_name = ""
+
 
 ###------------------Functie defenities-----------------------------
+
+def on_enter(e): # zorgt voor het veranderen van kleur bij hoveren, omdat active background alleen werkt bij indrukken
+    e.widget['background'] = "#1DB954"
+
+def on_leave(e):
+    e.widget['background'] = "SystemButtonFace"
 
 #zoeken functies
 def zoekNummer():
@@ -220,14 +232,14 @@ def addSongPlaylist(nummer, playlist):#voegt een nummer met playlist samen sql f
     SQL_fitopsy.addSongOnPlaylist(nummer, playlist[0])
 
 #Nummer toevoegen functies(robin)
-def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet handmatigf moet worden ingevuld
+def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet altijd handmatig moet worden ingevuld
     global file_path
     file_path = StringVar()
-    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("FLAC files","*.flac"),("wav files","*.wav"),("All files","*.*"))) #bepaalt welke bestandtypes gezein kunnen worden
-    # print(file_path)
+    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("FLAC files","*.flac"),("wav files","*.wav"),("All files","*.*"))) #bepaalt welke bestandtypes gezeien kunnen worden
+
     return(file_path)
 
-def metadata(file_path):
+def metadata(file_path): # haalt alle metadata uit het muziek bestand, werkt via tinytag
     global name
     global artist
     global genre
@@ -236,21 +248,23 @@ def metadata(file_path):
     global year
     tag = TinyTag.get(file_path)
 
+#----komt wel in de database---------
     name = tag.title
     artist = tag.artist
     genre = tag.genre
+    streams = 0
+
+#-----komt niet in de database---------
     album = tag.album
     bitrate = tag.bitrate
     year = tag.year
-    streams = 0
 
     nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
 
     nummerGegevens()
-    # print("hola",name)
 
+#---Popup venster voor het tonen van opgehaalde gegevens
 def nummerGegevens():
-
     popup = Tk()
     popup.wm_title("fitopsy" )
     popup["bg"] = "white"
@@ -259,6 +273,11 @@ def nummerGegevens():
 
     labelNummer = Label(popup,bg ="White", text="Titel:     "+ name)
     labelNummer.grid(row=2, column=0, sticky="W")
+
+    knopSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy)
+    knopSluiten.place(relx= 0.5, rely= 0.8)
+    knopSluiten.bind("<Enter>", on_enter)
+    knopSluiten.bind("<Leave>", on_leave)
 
     labelArtist = Label(popup,bg ="White", text="Artiest: "+ artist)
     labelArtist.grid(row=1, column=0, sticky="W")
@@ -281,9 +300,7 @@ def nummerGegevens():
     labelYear = Label(popup,bg ="White", text="Jaar:        "+str(year))
     labelYear.grid(row=3, column=2, sticky="W")
 
-    LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy)
-    LabelSluiten.place(relx= 0.5, rely= 0.8)
-    
+#----voegt het ingevoerde nummer to aan de database
 def NummerToevoegen():
     name = ingevoerde_name.get()
     artist = ingevoerde_artist.get()
@@ -293,13 +310,8 @@ def NummerToevoegen():
     nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
     print(f"{name =}")
 
-def on_enter(e):
-    knopNummerToevoegen['background'] = 'white'
-
-def on_leave(e):
-    knopNummerToevoegen['background'] = 'SystemButtonFace'
-
-def HandmatigToevoegen(): #popup handmaig toevoegen
+#----popup venster voor handmatig invoeren
+def HandmatigToevoegen():
     global ingevoerde_name
     global ingevoerde_artist
     global ingevoerde_genre
@@ -312,8 +324,9 @@ def HandmatigToevoegen(): #popup handmaig toevoegen
     popup.iconbitmap("fitopsy.ico")
     popup.geometry("300x150")
 
+#---Keuzemenu voor genre
     ingevoerde_genre = StringVar()
-    ingevoerde_genre.set("Hiphop") #keuzemenu voor genres
+    ingevoerde_genre.set("Hiphop")
     entryGenre = OptionMenu(popup, ingevoerde_genre, "Hiphop","Rock","Pop","Klassiek","K-pop","Jazz","Disoc", "Electro","Alternatief" )
     entryGenre.grid(row=2, column=1, sticky="W")
 
@@ -331,15 +344,11 @@ def HandmatigToevoegen(): #popup handmaig toevoegen
     entryArtist = Entry(popup, textvariable=ingevoerde_artist)
     entryArtist.grid(row=1, column=1, sticky="W")
 
-    LabelSluiten = Button(popup,bg="white", text=" opslaan", command=NummerToevoegen)
+    LabelSluiten = Button(popup,bg="white", text=" opslaan", command=lambda:[NummerToevoegen(),popup.destroy()])
     LabelSluiten.place(relx=0.5,rely=0.8)
 
     labelGenre = Label(popup,bg ="White", text="Genre:" )
     labelGenre.grid(row=2, column=0, sticky="W")
-
-    # ingevoerde_genre = StringVar()
-    # entryGenre = Entry(popup, textvariable=ingevoerde_genre)
-    # entryGenre.grid(row=2, column=1, sticky="W")
 
     labelFilepath = Label(popup,bg ="White", text="Filepath:" )
     labelFilepath.grid(row=3, column=0, sticky="W")
@@ -353,8 +362,9 @@ def HandmatigToevoegen(): #popup handmaig toevoegen
 zoeken =Frame(venster, bg= black, width=400, height= 400)
 zoeken.place(relx= 0.5, y =120,anchor= N)
 
-labelNummer = Label(zoeken,text="zoeken:", width =12 )
+labelNummer = Label(zoeken,bg="white",text="zoeken:", width =12 )
 labelNummer.place(relx = 0, y=3, anchor= NW)
+
 
 ingevoerde_nummer = StringVar()
 entryNummer = Entry(zoeken, textvariable=ingevoerde_nummer, width= 40)
@@ -362,6 +372,8 @@ entryNummer.place(relx= 0.5, y = 5, anchor= N)
 
 knopNummer = Button(zoeken, text="zoek nummer", width= 12, command=zoekNummer)
 knopNummer.place(relx = 1, y = 0, anchor = NE )
+knopNummer.bind("<Enter>", on_enter)
+knopNummer.bind("<Leave>", on_leave)
 
     #resultaten listbox
 resultatenFrame = Frame(zoeken, width=30, height=50)
@@ -369,7 +381,7 @@ resultatenFrame.place(relx=0.5, y=30, anchor=N)
 
 zoekResultaten =  Listbox(resultatenFrame, bg= "white" , width=40, height=100)
 zoekResultaten.pack(padx=5, pady=19)
-resultatenLabel =  Label(resultatenFrame, text="resultaten:", width=17,)
+resultatenLabel =  Label(resultatenFrame,bg="white", text="resultaten:", width=17,)
 resultatenLabel.place(relx=0.5, y=10, anchor=CENTER)
 
 zoekResultaten.bind("<<ListboxSelect>>", selecterenZoeken)
@@ -392,6 +404,9 @@ playlistEntry.place(relx=0.5, y = 330, anchor=N)
 
 playlistToevoegenKnop = Button(playlistFrame, text="maak nieuwe playlist", width= 20, command= voegPlaylistToe)
 playlistToevoegenKnop.place(relx= 0.5, y = 300, anchor=N)
+playlistToevoegenKnop.bind("<Enter>", on_enter)
+playlistToevoegenKnop.bind("<Leave>", on_leave)
+
 
 ##BOVEN BALK
 top = Frame(venster, bg= black, width=400, height= 100)
@@ -399,9 +414,13 @@ top.place(relx=0.5, y=0, anchor=N)
 
 knopPausePlay = Button(top, text="pause", width = 12, command=pausePlay)
 knopPausePlay.place(relx=0.5, y=4, anchor=N)
+knopPausePlay.bind("<Enter>", on_enter)
+knopPausePlay.bind("<Leave>", on_leave)
 
 knopVolgende = Button(top, text = "next", width=12, command= volgendNummerWachtrij)
 knopVolgende.place(relx=0.5, y=70, anchor=N)
+knopVolgende.bind("<Enter>", on_enter)
+knopVolgende.bind("<Leave>", on_leave)
 
 tijdLabel = Label(top, text="0:00 - 0:00", width = 14)
 tijdLabel.place(relx = 0.5, y= 40, anchor=N)
@@ -426,13 +445,15 @@ subTitelLabel = Label(left, text="""Not a Spotify clone.
 Robin Kuijpers en Willem Paternotte """,fg = green, font=mainFont )
 subTitelLabel.place(relx= 0.5, y = 60, anchor= CENTER)
 
-knopNummerToevoegen = Button(left,bg="#fffffb",fg="#191414",border=0 ,text="nummer toevoegen \n met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
+knopNummerToevoegen = Button(left,fg="#191414" ,text="nummer toevoegen \n met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
 knopNummerToevoegen.place(relx= 0.5, y = 150, anchor= CENTER)
-knopNummerToevoegen.bind("<Enter>", on_enter)   #voor het effect van activebackground
+knopNummerToevoegen.bind("<Enter>", on_enter) #voor het effect van activebackground
 knopNummerToevoegen.bind("<Leave>", on_leave)
-
+ 
 knopNummerHandmatigToevoegen = Button(left,text="Nummer toevoegen \n zonder metadata", width=20,height=2, command=lambda: HandmatigToevoegen()) 
 knopNummerHandmatigToevoegen.place(relx= 0.5, y = 200, anchor= CENTER)
+knopNummerHandmatigToevoegen.bind("<Enter>", on_enter)
+knopNummerHandmatigToevoegen.bind("<Leave>", on_leave)
 
 
 
