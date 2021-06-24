@@ -117,6 +117,9 @@ def speelNummer(nummer_id):#speelt nummer af
     playing = nummer_Locatie[0]
     pygame.mixer.music.load(nummer_Locatie[0])
     pygame.mixer.music.play()    
+    nummer = SQL_fitopsy.getSongNameFromTable(nummer_id)[0]
+    artiest = SQL_fitopsy.getArtistFromSong(nummer_id)[0]
+    playingLabel.configure(text= nummer+" - "+artiest )
 
 def speelPlaylist(playlist): #speelt eerste nummer playlist en stop de rest in wachtrij 
     wachtrij.delete(0, END)
@@ -141,10 +144,10 @@ def afspeelTijd(): #display afspeeltijd en wachtrij loop
 def pausePlay():
     if pygame.mixer.music.get_busy() == True:
         pygame.mixer.music.pause()
-        knopPausePlay.configure(text="play")
+        knopPausePlay.configure(text="speel")
     else:
         pygame.mixer.music.unpause()
-        knopPausePlay.configure(text="pause")
+        knopPausePlay.configure(text="pauze")
         
 def addSongWachtrij(id): #voegt 1 nummer toe aan wachtrij
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
@@ -331,7 +334,7 @@ def HandmatigToevoegen(): #popup handmaig toevoegen
     entryArtist = Entry(popup, textvariable=ingevoerde_artist)
     entryArtist.grid(row=1, column=1, sticky="W")
 
-    LabelSluiten = Button(popup,bg="white", text=" opslaan", command=NummerToevoegen)
+    LabelSluiten = Button(popup,bg="white", text=" opslaan", command=lambda: (NummerToevoegen(), popup.destroy()))
     LabelSluiten.place(relx=0.5,rely=0.8)
 
     labelGenre = Label(popup,bg ="White", text="Genre:" )
@@ -393,15 +396,20 @@ playlistEntry.place(relx=0.5, y = 330, anchor=N)
 playlistToevoegenKnop = Button(playlistFrame, text="maak nieuwe playlist", width= 20, command= voegPlaylistToe)
 playlistToevoegenKnop.place(relx= 0.5, y = 300, anchor=N)
 
-##BOVEN BALK
+##====BOVEN BALK====
 top = Frame(venster, bg= black, width=400, height= 100)
 top.place(relx=0.5, y=0, anchor=N)
 
-knopPausePlay = Button(top, text="pause", width = 12, command=pausePlay)
+knopPausePlay = Button(top, text="pauze", width = 12, command=pausePlay)
 knopPausePlay.place(relx=0.5, y=4, anchor=N)
 
-knopVolgende = Button(top, text = "next", width=12, command= volgendNummerWachtrij)
+knopVolgende = Button(top, text = "volgende", width=12, command= volgendNummerWachtrij)
 knopVolgende.place(relx=0.5, y=70, anchor=N)
+
+nowPlayingLabel =  Label(top, text="Speelt nu:")
+nowPlayingLabel.place(x= 30, rely = 0.01, anchor= NW)
+playingLabel = Label(top, width=15, wraplength= 100)
+playingLabel.place(x= 16, rely = 0.2, anchor= NW)
 
 tijdLabel = Label(top, text="0:00 - 0:00", width = 14)
 tijdLabel.place(relx = 0.5, y= 40, anchor=N)
