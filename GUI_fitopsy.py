@@ -7,16 +7,21 @@
 #
 ###------------------bibliotheek en globale variabelen--------------
 
+from os import name
+
 from tkinter import *
 import tkinter
 from tkinter.font import Font
+from tkinter import filedialog
 
-import pygame
+import pygame 
 from pygame import mixer
+
+from tinytag import TinyTag #VOOR META DATA MP3 BESTANDEN
+import tkinter as tk # voor popup scherm check
 
 import datetime
 
-from tinytag import TinyTag
 
 import SQL_fitopsy
 
@@ -36,16 +41,27 @@ pygame.mixer.init()
 
 
 mainFont = Font(
-    family="Comic Sans MS", #Het suprieure lettertype
-    size= 20,
+    family="Comic Sans MS",
+    size= 40,
     )
 venster.geometry("900x400")
 venster.wm_title("fitopsy" )
 venster["bg"] = "white"
 venster.iconbitmap("fitopsy.ico")
 
+#globale variabele voor het tonen van nummerGegevens
+name = ""
+artist = ""
+genre = ""
+file_path = ""
+album = ""
+bitrate = 0
+year = 0
+
 
 ###------------------Functie defenities-----------------------------
+
+#zoeken functies
 def zoekNummer():
     zoekResultaten.delete(0, END)
     nummerResultaten = SQL_fitopsy.getSongIDsFromTable("songs", ingevoerde_nummer.get())#meerdere resultaten
@@ -57,7 +73,6 @@ def zoekNummer():
         artiest = SQL_fitopsy.getArtistFromSong(id[0])[0]
         zoekResultaten.insert(END, nummer+" - "+artiest)
 
-
 def selecterenZoeken(event):#activeert popu bij selectie in list box
     selection = event.widget.curselection()
     if selection:
@@ -67,7 +82,6 @@ def selecterenZoeken(event):#activeert popu bij selectie in list box
         nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]#tuple erin, tuple eruit.
         nummerMenu(nummer_id)
     
-
 def nummerMenu(id): #popup menu
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
     artiest = SQL_fitopsy.getArtistFromSong(id)[0]
@@ -85,15 +99,14 @@ def nummerMenu(id): #popup menu
     x = venster.winfo_pointerx() - venster.winfo_vrootx()
     y = venster.winfo_pointery() - venster.winfo_vrooty()
     nummer_menu.tk_popup(x, y )
-    
-   
+
+#afpselen en wachtrij functies  
 def speelNummer(nummer_id):#speelt nummer af
     nummer_Locatie = SQL_fitopsy.getSongLocationFromTable("songs", nummer_id)#is tuple
     global playing
     playing = nummer_Locatie[0]
     pygame.mixer.music.load(nummer_Locatie[0])
-    pygame.mixer.music.play()
-    
+    pygame.mixer.music.play()    
 
 def speelPlaylist(playlist): #speelt eerste nummer playlist en stop de rest in wachtrij 
     wachtrij.delete(0, END)
@@ -144,41 +157,7 @@ def volgendNummerWachtrij():
         pygame.mixer.music.stop()
         tijdLabel.configure(text="0:00 - 0:00")
 
-# def playlistAanmaken():
-    # global playlistvensterActive
-    # running = playlistvensterActive
-    # if running != True:
-    #     playlistVenster = Tk()
-    #     playlistVenster.wm_title("fitopsy" )
-    #     playlistVenster["bg"] = "white"
-    #     playlistVenster.iconbitmap("fitopsy.ico")
-    #     playlistVenster.protocol("WM_DELETE_WINDOW", lambda: (playlistWindowDelete(), playlistVenster.destroy()))
-    #     running = True
-        
-    #     entryNaam = Entry(playlistVenster, textvariable=playlist_naam)
-    #     entryNaam.place(relx= 0.5, rely=0.5, anchor=CENTER)
-
-    #     entryNaamLabel = Label(playlistVenster, text="Naam Playlist:", width=20)
-    #     entryNaamLabel.place(relx=0.5, rely= 0.4, anchor=CENTER)
-        
-    #     knopTEST = Button(playlistVenster, text="TEST", width=12, command=lambda: print("naam:"+playlist_naam.get()+str(playlist_naam)))
-    #     knopTEST.place(relx= 0.5, rely= 0.2, anchor=N)
-
-    #     knopSluit = Button(playlistVenster, text="Aanmaken", width=12, command=lambda: (SQL_fitopsy.addPlaylist(playlist_naam.get()), playlistWindowDelete(), playlistVenster.destroy()) )
-    #     knopSluit.place(relx=0.5, rely=0.9, anchor=CENTER)
-
-    # playlistvensterActive = running
-
-# def playlistWindowDelete(): #global variabele update moest appart want python deed stom
-    # global playlistvensterActive
-    # playlistvensterActive = False
-
-# def playlistToevoegen():
-    # global playlist_naam
-    # print(playlist_naam.get())
-    # SQL_fitopsy.addPlaylist(playlist_naam.get())
-    # playlistListbox.insert(END, playlist_naam.get())
-
+#playlist functies
 def playlistListboxVullen(resulutaten):#voegt alle playlist toe aan listbox playlist
     for resultaat in resulutaten:
         playlistListbox.insert(END, resultaat)
@@ -230,14 +209,140 @@ def addSongPlaylistMenu(id, x,y):#popup voor als je een nummer aan een playlist 
 def addSongPlaylist(nummer, playlist):#voegt een nummer met playlist samen sql functie
     SQL_fitopsy.addSongOnPlaylist(nummer, playlist[0])
 
-###------------------Hoofdprogramma---------------------------------
-labelIntro = Label(venster,bg = "white", text="welkom", font = mainFont )
-labelIntro.grid(row=0, column=0, sticky="W")
+#Nummer toevoegen functies(robin)
+def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath niet handmatigf moet worden ingevuld
+    global file_path
+    file_path = StringVar()
+    file_path = filedialog.askopenfilenames(filetypes=(("mp3 files","*.mp3"),("FLAC files","*.flac"),("wav files","*.wav"),("All files","*.*"))) #bepaalt welke bestandtypes gezein kunnen worden
+    # print(file_path)
+    return(file_path)
 
+def metadata(file_path):
+    global name
+    global artist
+    global genre
+    global album
+    global bitrate
+    global year
+    tag = TinyTag.get(file_path)
+
+    name = tag.title
+    artist = tag.artist
+    genre = tag.genre
+    album = tag.album
+    bitrate = tag.bitrate
+    year = tag.year
+    streams = 0
+
+    nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
+
+    nummerGegevens()
+    # print("hola",name)
+
+def nummerGegevens():
+
+    popup = Tk()
+    popup.wm_title("fitopsy" )
+    popup["bg"] = "white"
+    popup.iconbitmap("fitopsy.ico")
+    popup.geometry("300x120")
+
+    labelNummer = Label(popup,bg ="White", text="Titel:     "+ name)
+    labelNummer.grid(row=2, column=0, sticky="W")
+
+    labelArtist = Label(popup,bg ="White", text="Artiest: "+ artist)
+    labelArtist.grid(row=1, column=0, sticky="W")
+
+    labelGenre = Label(popup,bg ="White", text="Genre:  "+ genre)
+    labelGenre.grid(row=3, column=0, sticky="W")
+
+    labelInfo = Label(popup,bg ="White", text="Info")
+    labelInfo.grid(row=0, column=0, sticky="W")
+
+    labelExtraInfo = Label(popup,bg ="White", text="extra info")
+    labelExtraInfo.grid(row=0, column=2, sticky="W")
+
+    labelAlbum = Label(popup,bg ="White", text="Album:  "+album)
+    labelAlbum.grid(row=1, column=2, sticky="W")
+
+    labelBitrate = Label(popup,bg ="White", text="Bitrate:   "+str(round(bitrate))+"kBits/s")
+    labelBitrate.grid(row=2, column=2, sticky="W")
+    
+    labelYear = Label(popup,bg ="White", text="Jaar:        "+str(year))
+    labelYear.grid(row=3, column=2, sticky="W")
+
+    LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy)
+    LabelSluiten.place(relx= 0.5, rely= 0.8)
+    
+def NummerToevoegen():
+    name = ingevoerde_name.get()
+    artist = ingevoerde_artist.get()
+    genre = ingevoerde_genre.get()
+    file_path = ingevoerde_file_path.get()
+    # print("name::",name)
+    nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
+    print(f"{name =}")
+
+def on_enter(e):
+    knopNummerToevoegen['background'] = 'white'
+
+def on_leave(e):
+    knopNummerToevoegen['background'] = 'SystemButtonFace'
+
+def HandmatigToevoegen(): #popup handmaig toevoegen
+    global ingevoerde_name
+    global ingevoerde_artist
+    global ingevoerde_genre
+    global ingevoerde_file_path
+
+    popup = Toplevel(venster)
+    # popup = Tk()
+    popup.wm_title("fitopsy" )
+    popup["bg"] = "white"
+    popup.iconbitmap("fitopsy.ico")
+    popup.geometry("300x150")
+
+    ingevoerde_genre = StringVar()
+    ingevoerde_genre.set("Hiphop") #keuzemenu voor genres
+    entryGenre = OptionMenu(popup, ingevoerde_genre, "Hiphop","Rock","Pop","Klassiek","K-pop","Jazz","Disoc", "Electro","Alternatief" )
+    entryGenre.grid(row=2, column=1, sticky="W")
+
+    labelName = Label(popup,bg ="White", text="Titel:" )
+    labelName.grid(row=0, column=0, sticky="W")
+    
+    ingevoerde_name = StringVar()
+    entryName = Entry(popup, textvariable=ingevoerde_name)
+    entryName.grid(row=0, column=1, sticky="W")
+
+    labelArtist = Label(popup,bg ="White", text="Artiest:" )
+    labelArtist.grid(row=1, column=0, sticky="W")
+    
+    ingevoerde_artist = StringVar()
+    entryArtist = Entry(popup, textvariable=ingevoerde_artist)
+    entryArtist.grid(row=1, column=1, sticky="W")
+
+    LabelSluiten = Button(popup,bg="white", text=" opslaan", command=NummerToevoegen)
+    LabelSluiten.place(relx=0.5,rely=0.8)
+
+    labelGenre = Label(popup,bg ="White", text="Genre:" )
+    labelGenre.grid(row=2, column=0, sticky="W")
+
+    # ingevoerde_genre = StringVar()
+    # entryGenre = Entry(popup, textvariable=ingevoerde_genre)
+    # entryGenre.grid(row=2, column=1, sticky="W")
+
+    labelFilepath = Label(popup,bg ="White", text="Filepath:" )
+    labelFilepath.grid(row=3, column=0, sticky="W")
+
+    ingevoerde_file_path = StringVar()
+    entryFilepath = Entry(popup, textvariable=ingevoerde_file_path)
+    entryFilepath.grid(row=3, column=1, sticky="W")
+
+##============HOOFD PROGRAMMA==================
 zoeken =Frame(venster, bg="grey", width=400, height= 400)
 zoeken.place(relx= 0.5, y =105,anchor= N)
 
-##ZOEKEN--
+##====ZOEKEN===
 labelNummer = Label(zoeken,text="zoeken:", width =12 )
 labelNummer.place(relx = 0, y=0, anchor= NW)
 
@@ -248,7 +353,7 @@ entryNummer.place(relx= 0.5, y = 0, anchor= N)
 knopNummer = Button(zoeken, text="zoek nummer", width= 12, command=zoekNummer)
 knopNummer.place(relx = 1, y = 0, anchor = NE )
 
-#resultaten listbox
+    #resultaten listbox
 resultatenFrame = Frame(zoeken, width=30, height=50)
 resultatenFrame.place(relx=0.5, y=30, anchor=N)
 
@@ -259,7 +364,7 @@ resultatenLabel.place(relx=0.5, y=10, anchor=CENTER)
 
 zoekResultaten.bind("<<ListboxSelect>>", selecterenZoeken)
 
-#PLAYLIST
+#====PLAYLIST=====
 playlistFrame = Frame(venster, bg="grey", width=200, height=900)
 playlistFrame.place(relx= 1, y = 0, anchor= NE)
 
@@ -302,10 +407,20 @@ wachtrijLabel.place(relx=0.95, y=5, anchor=E)
 
 
 
-# knopSluit = Button(venster, text="Sluiten", width=12, command=venster.destroy)
-# knopSluit.grid(row=17, column=4)
 
+knopNummerToevoegen = Button(venster,bg="#fffffb",fg="#191414",border=0 ,text="nummer toevoegen \n met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
+knopNummerToevoegen.grid(row=2, column=3, sticky="W")
+knopNummerToevoegen.bind("<Enter>", on_enter)   #voor het effect van activebackground
+knopNummerToevoegen.bind("<Leave>", on_leave)
+
+knopNummerHandmatigToevoegen = Button(venster,text="Nummer toevoegen \n zonder metadata", width=20,height=2, command=lambda: HandmatigToevoegen()) 
+knopNummerHandmatigToevoegen.grid(row=3, column=3, sticky="W")
+
+
+
+##191414 spotify zwart
+##1DB954 spotify groen
+##fffffb wit
+##ebe6e1 donker wit
 afspeelTijd()
 venster.mainloop()
-
-
