@@ -52,7 +52,6 @@ def zoekNummer():
     artiestResultaten = SQL_fitopsy.getSongIDsFromArtists(ingevoerde_nummer.get())
     IDs = nummerResultaten+artiestResultaten
     IDs = list(dict.fromkeys(IDs))
-    print(IDs)
     for id in IDs:#meerdere resultaten in listbox stoppen
         nummer = SQL_fitopsy.getSongNameFromTable(id[0])[0]
         artiest = SQL_fitopsy.getArtistFromSong(id[0])[0]
@@ -64,8 +63,8 @@ def selecterenZoeken(event):#activeert popu bij selectie in list box
     if selection:
         index = selection[0]
         nummer = event.widget.get(index)
-        nummer = nummer.split(" -")
-        nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]
+        nummer = nummer.split(" -")#pakt alleen nummer(hij krijgt nummer - artiest bij selecteren)
+        nummer_id= SQL_fitopsy.getSongIDFromTable("songs", nummer[0])[0]#tuple erin, tuple eruit.
         nummerMenu(nummer_id)
     
 
@@ -73,7 +72,7 @@ def nummerMenu(id): #popup menu
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
     artiest = SQL_fitopsy.getArtistFromSong(id)[0]
 
-    nummer_menu =  Menu(venster, tearoff= 0)
+    nummer_menu =  Menu(venster, tearoff= 0)#zorgt dat je niet tear off kan doen(tearoff is het menu los maken)
 
     nummer_menu.add_command(label= nummer+" - "+artiest, command= lambda: nummerMenu(id))#knop heropent popup, zo kan je een label toevoegen aan het menu
     nummer_menu.add_separator()
@@ -88,21 +87,20 @@ def nummerMenu(id): #popup menu
     nummer_menu.tk_popup(x, y )
     
    
-def speelNummer(nummer_id):
-    nummer_Locatie = SQL_fitopsy.getSongLocationFromTable("songs", nummer_id)
+def speelNummer(nummer_id):#speelt nummer af
+    nummer_Locatie = SQL_fitopsy.getSongLocationFromTable("songs", nummer_id)#is tuple
     global playing
     playing = nummer_Locatie[0]
     pygame.mixer.music.load(nummer_Locatie[0])
     pygame.mixer.music.play()
-    # print(nummer_Locatie)
+    
 
 def speelPlaylist(playlist): #speelt eerste nummer playlist en stop de rest in wachtrij 
     wachtrij.delete(0, END)
     songlist =  SQL_fitopsy.getSongIDsFromPlaylist(playlist)
     speelNummer(songlist[0][0])
-    for x in range(len(songlist)-1):
-        print(songlist[x+1][0])
-        addSongWachtrij(songlist[x+1][0])
+    for x in range(len(songlist)-1):#lengte is 1 korter want eerste nummer is al aan het spelen
+        addSongWachtrij(songlist[x+1][0])#omdat de lengte 1 korter is moet die index 1 groter om het juiste nummer toetevoegen
 
 def afspeelTijd(): #display afspeeltijd en wachtrij loop
     if not(playing == ""):
@@ -114,7 +112,6 @@ def afspeelTijd(): #display afspeeltijd en wachtrij loop
 
         if int(pygame.mixer.music.get_pos()/1000) >= (totaal_tijd-1):#check voor volgende nummer in deze functie anders hebben we 2 loop functies en dat is minder efficient
             volgendNummerWachtrij()
-            print("ja")
 
     tijdLabel.after(1000,afspeelTijd)#loop iedere seconde
 
@@ -129,11 +126,10 @@ def pausePlay():
 def addSongWachtrij(id): #voegt 1 nummer toe aan wachtrij
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
     artiest = SQL_fitopsy.getArtistFromSong(id)[0]
-    wachtrij.insert(END, nummer+" - "+artiest)
+    wachtrij.insert(END, nummer+" - "+artiest)#nummer als laatse in wachtrij
 
 def addPlaylistWachtrij(playlist): #voegt alle nummers van playlist toe aan wachtrij
     songlist =  SQL_fitopsy.getSongIDsFromPlaylist(playlist)
-    print(songlist)
     for x in range(len(songlist)):
         addSongWachtrij(songlist[x][0])
 
@@ -203,7 +199,7 @@ def playlistMenu(playlist):# menu voor opites playlist
     playlist_menu.add_command(label="Voeg playlist toe aan wachtrij", command= lambda: addPlaylistWachtrij(playlist))
     #voeg hier meer commands toe
 
-
+    #vind x en y en plaats daar popup
     x = venster.winfo_pointerx() - venster.winfo_vrootx()
     y = venster.winfo_pointery() - venster.winfo_vrooty()
     playlist_menu.tk_popup(x, y )
@@ -211,8 +207,8 @@ def playlistMenu(playlist):# menu voor opites playlist
 def voegPlaylistToe():#maakt playlist aan in database en listbox
     naam = playlist_naam.get()
     if naam != "" :
-        SQL_fitopsy.addPlaylist(naam)
-        playlistListbox.insert(END, naam)
+        SQL_fitopsy.addPlaylist(naam)#voeg to aan database
+        playlistListbox.insert(END, naam)#update list box met nieuwe playlist
 
 def addSongPlaylistMenu(id, x,y):#popup voor als je een nummer aan een playlist wilt toevoegen
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
@@ -273,7 +269,7 @@ playlistLabel.place(relx= 0.5, y= 20, anchor=N)
 playlistListbox = Listbox(playlistFrame, width= 30, height= 15)
 playlistListbox.place(relx=0.5, y = 50, anchor= N)
 playlistListboxVullen(SQL_fitopsy.getAllPlaylists())#vult listbox met al de bestaande playlists
-playlistListbox.bind("<<ListboxSelect>>", selecterenPlaylist)
+playlistListbox.bind("<<ListboxSelect>>", selecterenPlaylist)#zorgt er voor dat functie selecterenPlaylist 
 
 playlist_naam =StringVar()
 playlistEntry = Entry(playlistFrame, textvariable=playlist_naam)

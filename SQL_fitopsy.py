@@ -7,25 +7,25 @@ def makeTableSongs():
     cursor.execute("CREATE TABLE IF NOT EXISTS songs"
                        "(song_id INTEGER PRIMARY KEY AUTOINCREMENT, song_name TEXT NOT NULL, artist_id INTEGER NOT NULL, Genre TEXT NO NULL, file_location TEXT NOT NULL, Streams INTEGER NOT NULL, FOREIGN KEY(artist_id) REFERENCES artists(artist_id));"  
                     )
-    print("Tabel songs is aangemaakt")
+    # print("Tabel songs is aangemaakt")
 
 def makeTableArtists():
     cursor.execute("CREATE TABLE IF NOT EXISTS artists"
                         "(artist_id INTEGER PRIMARY KEY AUTOINCREMENT, artist_name TEXT NOT NULL);"
                     )
-    print("Tabel artists is aangemaakt")
+    # print("Tabel artists is aangemaakt")
 
 def makeTablePlaylists():
     cursor.execute("CREATE TABLE IF NOT EXISTS playlists"
                         "(playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name TEXT NOT NULL);"
                     )
-    print("Tabel playlists is aangemaakt")
+    # print("Tabel playlists is aangemaakt")
 
 def makeTableSongOnPlaylist():
     cursor.execute("CREATE TABLE IF NOT EXISTS songs_on_playlists"
                         "(matching_id INTEGER PRIMARY KEY AUTOINCREMENT, song_id INTEGER NOT NULL, playlist_id INTEGER NOT NULL, FOREIGN KEY(song_id) REFERENCES songs(song_id), FOREIGN KEY(playlist_id) REFERENCES playlists(playlist_id));"
                     )
-    print("Tabel songs_on_playlists is aangemaakt")
+    # print("Tabel songs_on_playlists is aangemaakt")
 
 # def makeTableUsers():
 #     cursor.execute("CREATE TABLE IF NOT EXISTS users"
@@ -44,24 +44,24 @@ def addSong(name, artist, genre, file_location, streams):
 
     cursor.execute("INSERT INTO songs VALUES (NULL, ?, ?, ?, ?, ?) ", (name, artist_id, genre, file_location, streams))
     cursor.execute("COMMIT")
-    print("nummer toegevoeg")
+    # print("nummer toegevoegd")
 
 def addArtist(artist):
     cursor.execute("INSERT INTO artists VALUES (NULL, ? ) ", (artist, ))
     cursor.execute("COMMIT") 
-    print("Artiest toegevoegd")
+    # print("Artiest toegevoegd")
 
 def addPlaylist(name):
     cursor.execute("INSERT INTO playlists VALUES (NULL, ?) ", (name, ))
     cursor.execute("COMMIT")
-    print("Playlist aangemaakt") 
+    # print("Playlist aangemaakt") 
 
 def addSongOnPlaylist(song, playlist):
     song_id = int(getSongIDFromTable("songs", song)[0])
     playlist_id = int(getPlaylistFromTable(playlist)[0])
     cursor.execute("INSERT INTO songs_on_playlists VALUES(NULL,?,?)",(song_id, playlist_id))
     cursor.execute("COMMIT")
-    print("nummer toegevoegd aan playlist")
+    # print("nummer toegevoegd aan playlist")
 
 # def addUser(name):
 #     cursor.execute("INSERT INTO users VALUES (NULL, ?)",(name, ))
@@ -94,18 +94,19 @@ def getArtistFromSong(id):
                         WHERE songs.song_id = ?;""",(id,))
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
-#functies met songs
-def getSongIDFromTable(table, name):
+
+#functies met tabel songs
+def getSongIDFromTable(table, name):#reeturned 1 song id
     cursor.execute("SELECT song_id FROM "+table+" WHERE UPPER(song_name) LIKE ?;", ("%"+str.upper(name)+"%",))#like stamentent staat niet volledig uit typen toe
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
 
-def getSongIDsFromTable(table, name):#meerdere resultaten
+def getSongIDsFromTable(table, name):#meerdere song ids
     cursor.execute("SELECT song_id FROM "+table+" WHERE UPPER(song_name) LIKE ?;", ("%"+str.upper(name)+"%",))#like stamentent staat niet volledig uit typen toe
     result = cursor.fetchall() 
     return( result)
 
-def getSongIDsFromPlaylist(playlist):
+def getSongIDsFromPlaylist(playlist):#geeft alle nummers(song ids) op een playlist
     cursor.execute("""SELECT songs_on_playlists.song_id
                     FROM songs_on_playlists
                     LEFT JOIN playlists
@@ -114,7 +115,7 @@ def getSongIDsFromPlaylist(playlist):
     result = cursor.fetchall() 
     return( result)                
 
-def getSongIDsFromArtists(name):
+def getSongIDsFromArtists(name):#geeft alle nummers(song ids) van een artiest
     cursor.execute("""SELECT song_id
                         FROM songs
                         Left join artists
@@ -123,22 +124,23 @@ def getSongIDsFromArtists(name):
     result = cursor.fetchall() 
     return( result)
 
-def getSongLocationFromTable(table, id):
+def getSongLocationFromTable(table, id):#returned filepath van een nummer
     cursor.execute("SELECT file_location FROM "+table+" WHERE song_id = ?;", (id,))
     result = cursor.fetchone()
     return(result)
 
-def getSongNameFromTable(id):
+def getSongNameFromTable(id):#returned nummer naam van song id
     cursor.execute("SELECT song_name FROM songs WHERE song_id = ?;", (id,))
     result = cursor.fetchone()
     return(result)
-#
-def getPlaylistFromTable(name):
+
+#playlist functies
+def getPlaylistFromTable(name):#playlist id van playlist
     cursor.execute("SELECT playlist_id FROM playlists WHERE playlist_name = ?;", (name,))
     result = cursor.fetchone() # je wilt maar 1 rij met gegevens
     return( result)
 
-def getAllPlaylists():
+def getAllPlaylists():#selecteerd alle playlists
     cursor.execute("SELECT playlist_name FROM playlists")
     result = cursor.fetchall()
     return(result)
@@ -168,10 +170,10 @@ def verwijderUitTabel(tabelnaam, titel):
 #     print("Geef je keuze: ")
 #     keuze = input()
 #     if keuze == "1":
-#         makeTableSongs()
-#         makeTableArtists()
-#         makeTablePlaylists()
-#         makeTableSongOnPlaylist()
+makeTableArtists()
+makeTableSongs()
+makeTablePlaylists()
+makeTableSongOnPlaylist()
 
       
 #     elif keuze == "2":
