@@ -15,7 +15,7 @@ from tkinter.font import Font
 from tkinter import filedialog
 
 import pygame 
-from pygame import mixer
+from pygame import Color, mixer
 
 from tinytag import TinyTag #VOOR META DATA MP3 BESTANDEN
 import tkinter as tk # voor popup scherm check
@@ -40,14 +40,24 @@ pygame.init()
 pygame.mixer.init()
 
 
+titelFont = Font(
+    family="Comic Sans MS",
+    size= 20,
+    )
+
 mainFont = Font(
     family="Comic Sans MS",
-    size= 40,
+    size= 9,
     )
+    
 venster.geometry("900x400")
 venster.wm_title("fitopsy" )
-venster["bg"] = "white"
+venster["bg"] = "#1ED760"
 venster.iconbitmap("fitopsy.ico")
+
+green = "#1ED760"
+black = "#F0F0F0"
+# black = "#191414"
 
 #globale variabele voor het tonen van nummerGegevens
 name = ""
@@ -339,16 +349,16 @@ def HandmatigToevoegen(): #popup handmaig toevoegen
     entryFilepath.grid(row=3, column=1, sticky="W")
 
 ##============HOOFD PROGRAMMA==================
-zoeken =Frame(venster, bg="grey", width=400, height= 400)
-zoeken.place(relx= 0.5, y =105,anchor= N)
-
 ##====ZOEKEN===
+zoeken =Frame(venster, bg= black, width=400, height= 400)
+zoeken.place(relx= 0.5, y =120,anchor= N)
+
 labelNummer = Label(zoeken,text="zoeken:", width =12 )
-labelNummer.place(relx = 0, y=0, anchor= NW)
+labelNummer.place(relx = 0, y=3, anchor= NW)
 
 ingevoerde_nummer = StringVar()
-entryNummer = Entry(zoeken, textvariable=ingevoerde_nummer)
-entryNummer.place(relx= 0.5, y = 0, anchor= N)
+entryNummer = Entry(zoeken, textvariable=ingevoerde_nummer, width= 40)
+entryNummer.place(relx= 0.5, y = 5, anchor= N)
 
 knopNummer = Button(zoeken, text="zoek nummer", width= 12, command=zoekNummer)
 knopNummer.place(relx = 1, y = 0, anchor = NE )
@@ -357,7 +367,7 @@ knopNummer.place(relx = 1, y = 0, anchor = NE )
 resultatenFrame = Frame(zoeken, width=30, height=50)
 resultatenFrame.place(relx=0.5, y=30, anchor=N)
 
-zoekResultaten =  Listbox(resultatenFrame, bg="grey", width=40, height=100)
+zoekResultaten =  Listbox(resultatenFrame, bg= "white" , width=40, height=100)
 zoekResultaten.pack(padx=5, pady=19)
 resultatenLabel =  Label(resultatenFrame, text="resultaten:", width=17,)
 resultatenLabel.place(relx=0.5, y=10, anchor=CENTER)
@@ -365,7 +375,7 @@ resultatenLabel.place(relx=0.5, y=10, anchor=CENTER)
 zoekResultaten.bind("<<ListboxSelect>>", selecterenZoeken)
 
 #====PLAYLIST=====
-playlistFrame = Frame(venster, bg="grey", width=200, height=900)
+playlistFrame = Frame(venster, bg= black , width=220, height=900)
 playlistFrame.place(relx= 1, y = 0, anchor= NE)
 
 playlistLabel = Label(playlistFrame, text="Mijn Playlists:", width= 12)
@@ -384,7 +394,7 @@ playlistToevoegenKnop = Button(playlistFrame, text="maak nieuwe playlist", width
 playlistToevoegenKnop.place(relx= 0.5, y = 300, anchor=N)
 
 ##BOVEN BALK
-top = Frame(venster, bg="grey", width=400, height= 100)
+top = Frame(venster, bg= black, width=400, height= 100)
 top.place(relx=0.5, y=0, anchor=N)
 
 knopPausePlay = Button(top, text="pause", width = 12, command=pausePlay)
@@ -400,21 +410,29 @@ tijdLabel.place(relx = 0.5, y= 40, anchor=N)
 wachtrijFrame = Frame(top, width=30)
 wachtrijFrame.place(relx=0.95, y=60, anchor=E)
 
-wachtrij = Listbox(wachtrijFrame, bg="grey", width=20, height=5)
+wachtrij = Listbox(wachtrijFrame, bg="white", width=20, height=5)
 wachtrij.pack(pady=5)
 wachtrijLabel = Label(top, text="wachtrij", width= 17)
 wachtrijLabel.place(relx=0.95, y=5, anchor=E)
 
 
+##===Nummer Toevoegen===
+left = Frame(venster, bg= black , width=220, height=900)
+left.place(relx= 0, y = 0, anchor= NW)
 
+titelLabel= Label(left, text= "FITOPSY", width= 20,fg = green, font=titelFont)
+titelLabel.place(relx= 0.5, y = 20, anchor= CENTER)
+subTitelLabel = Label(left, text="""Not a Spotify clone.
+Robin Kuijpers en Willem Paternotte """,fg = green, font=mainFont )
+subTitelLabel.place(relx= 0.5, y = 60, anchor= CENTER)
 
-knopNummerToevoegen = Button(venster,bg="#fffffb",fg="#191414",border=0 ,text="nummer toevoegen \n met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
-knopNummerToevoegen.grid(row=2, column=3, sticky="W")
+knopNummerToevoegen = Button(left,bg="#fffffb",fg="#191414",border=0 ,text="nummer toevoegen \n met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
+knopNummerToevoegen.place(relx= 0.5, y = 150, anchor= CENTER)
 knopNummerToevoegen.bind("<Enter>", on_enter)   #voor het effect van activebackground
 knopNummerToevoegen.bind("<Leave>", on_leave)
 
-knopNummerHandmatigToevoegen = Button(venster,text="Nummer toevoegen \n zonder metadata", width=20,height=2, command=lambda: HandmatigToevoegen()) 
-knopNummerHandmatigToevoegen.grid(row=3, column=3, sticky="W")
+knopNummerHandmatigToevoegen = Button(left,text="Nummer toevoegen \n zonder metadata", width=20,height=2, command=lambda: HandmatigToevoegen()) 
+knopNummerHandmatigToevoegen.place(relx= 0.5, y = 200, anchor= CENTER)
 
 
 
