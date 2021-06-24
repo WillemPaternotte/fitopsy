@@ -18,10 +18,21 @@ import tkinter as tk # voor popup scherm check
 import SQL_fitopsy
 
 #globale variabele voor het handmatig invoeren
+
 ingevoerde_name = ""
 ingevoerde_artist = ""
 ingevoerde_genre = ""
 ingevoerde_file_path = ""
+
+#globale variabele voor het tonen van nummerGegevens
+name = ""
+artist = ""
+genre = ""
+file_path = ""
+album = ""
+bitrate = 0
+year = 0
+
 
 venster = Tk()
 
@@ -56,30 +67,62 @@ def BestandKiezen(): #zorgt ervoor dat windows verkenner opent, zodat filepath n
     return(file_path)
 
 def metadata(file_path):
+    global name
+    global artist
+    global genre
+    global album
+    global bitrate
+    global year
     tag = TinyTag.get(file_path)
 
     name = tag.title
     artist = tag.artist
     genre = tag.genre
+    album = tag.album
+    bitrate = tag.bitrate
+    year = tag.year
     streams = 0
 
     nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
 
     nummerGegevens()
-    print(nieuw_nummer)
+    print("hola",name)
 
 def nummerGegevens():
+
     popup = Tk()
     popup.wm_title("fitopsy" )
     popup["bg"] = "white"
     popup.iconbitmap("fitopsy.ico")
-    popup.geometry("300x100")
+    popup.geometry("300x120")
 
-    labelNummer = Label(popup,bg ="White", textvariable=name)
-    labelNummer.grid(row=1, column=0, sticky="W")
+    labelNummer = Label(popup,bg ="White", text="Titel:     "+ name)
+    labelNummer.grid(row=2, column=0, sticky="W")
+
+    labelArtist = Label(popup,bg ="White", text="Artiest: "+ artist)
+    labelArtist.grid(row=1, column=0, sticky="W")
+
+    labelGenre = Label(popup,bg ="White", text="Genre:  "+ genre)
+    labelGenre.grid(row=3, column=0, sticky="W")
+
+    labelInfo = Label(popup,bg ="White", text="Info")
+    labelInfo.grid(row=0, column=0, sticky="W")
+
+    labelExtraInfo = Label(popup,bg ="White", text="extra info")
+    labelExtraInfo.grid(row=0, column=2, sticky="W")
+
+    labelAlbum = Label(popup,bg ="White", text="Album:  "+album)
+    labelAlbum.grid(row=1, column=2, sticky="W")
+
+    labelBitrate = Label(popup,bg ="White", text="Bitrate:   "+str(round(bitrate))+"kBits/s")
+    labelBitrate.grid(row=2, column=2, sticky="W")
+    
+    labelYear = Label(popup,bg ="White", text="Jaar:        "+str(year))
+    labelYear.grid(row=3, column=2, sticky="W")
 
     LabelSluiten = Button(popup,bg="white", text=" ok ", command= popup.destroy)
     LabelSluiten.place(relx= 0.5, rely= 0.8)
+    
 
 def NummerToevoegen():
     name = ingevoerde_name.get()
@@ -88,6 +131,7 @@ def NummerToevoegen():
     file_path = ingevoerde_file_path.get()
     print("name::",name)
     nieuw_nummer=SQL_fitopsy.addSong(name,artist,genre,file_path,0)
+    print(f"{name =}")
 
 #------------------Popup-scherm voor handmatig toevoegen---------------------------------
 
@@ -123,17 +167,15 @@ def HandmatigToevoegen():
     entryArtist = Entry(popup, textvariable=ingevoerde_artist)
     entryArtist.grid(row=1, column=1, sticky="W")
 
-    # opslaanKnop = PhotoImage(file="opslaanKnop.png")
-    # img_label= Label(image=opslaanKnop)
-    # LabelSluiten = Button(popup, image=opslaanKnop, command=NummerToevoegen,\
-    # borderwidth=0)
-    # LabelSluiten.pack(pady=1
-
-    LabelSluiten = Button(popup,bg="white", text=" opslaan ", command=NummerToevoegen)
+    LabelSluiten = Button(popup,bg="white", text=" opslaan", command=NummerToevoegen)
     LabelSluiten.place(relx=0.5,rely=0.8)
 
     labelGenre = Label(popup,bg ="White", text="Genre:" )
     labelGenre.grid(row=2, column=0, sticky="W")
+
+    # ingevoerde_genre = StringVar()
+    # entryGenre = Entry(popup, textvariable=ingevoerde_genre)
+    # entryGenre.grid(row=2, column=1, sticky="W")
 
     labelFilepath = Label(popup,bg ="White", text="Filepath:" )
     labelFilepath.grid(row=3, column=0, sticky="W")
@@ -162,10 +204,18 @@ knopNummer.grid(row=1, column=3, sticky="W")
 # entryNummerToevoegen = Entry(venster, textvariable=NieuwNummer)
 # entryNummerToevoegen.grid(row=2, column=2, sticky="W")
 
-knopNummerToevoegen = Button(venster,text="nummer toevoegen met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
-knopNummerToevoegen.grid(row=2, column=3, sticky="W")
+def on_enter(e):
+    knopNummerToevoegen['background'] = 'white'
 
-knopNummerHandmatigToevoegen = Button(venster,text="Nummer toevoegen zonder metadata", width=20, command=lambda: HandmatigToevoegen()) 
+def on_leave(e):
+    knopNummerToevoegen['background'] = 'SystemButtonFace'
+
+knopNummerToevoegen = Button(venster,bg="#fffffb",fg="#191414",border=0 ,text="nummer toevoegen \n met metadata", width=20, command=lambda:[BestandKiezen(), metadata(file_path[0])]) 
+knopNummerToevoegen.grid(row=2, column=3, sticky="W")
+knopNummerToevoegen.bind("<Enter>", on_enter)   #voor het effect van activebackground
+knopNummerToevoegen.bind("<Leave>", on_leave)
+
+knopNummerHandmatigToevoegen = Button(venster,text="Nummer toevoegen \n zonder metadata", width=20,height=2, command=lambda: HandmatigToevoegen()) 
 knopNummerHandmatigToevoegen.grid(row=3, column=3, sticky="W")
 
 # knopBestand = Button(venster, text="zoek bestand", width= 14, command=BestandKiezen) #bestand
@@ -203,4 +253,9 @@ knopNummerHandmatigToevoegen.grid(row=3, column=3, sticky="W")
 
 # def NummerToevoegen():
 #     nieuw_nummer=SQL_fitopsy.addSong()
+
+##191414 spotify zwart
+##1DB954 spotify groen
+##fffffb wit
+##ebe6e1 donker wit
 venster.mainloop()
