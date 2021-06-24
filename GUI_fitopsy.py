@@ -129,6 +129,9 @@ def speelNummer(nummer_id):#speelt nummer af
     playing = nummer_Locatie[0]
     pygame.mixer.music.load(nummer_Locatie[0])
     pygame.mixer.music.play()    
+    nummer = SQL_fitopsy.getSongNameFromTable(nummer_id)[0]
+    artiest = SQL_fitopsy.getArtistFromSong(nummer_id)[0]
+    playingLabel.configure(text= nummer+" - "+artiest )
 
 def speelPlaylist(playlist): #speelt eerste nummer playlist en stop de rest in wachtrij 
     wachtrij.delete(0, END)
@@ -153,10 +156,10 @@ def afspeelTijd(): #display afspeeltijd en wachtrij loop
 def pausePlay():
     if pygame.mixer.music.get_busy() == True:
         pygame.mixer.music.pause()
-        knopPausePlay.configure(text="play")
+        knopPausePlay.configure(text="speel")
     else:
         pygame.mixer.music.unpause()
-        knopPausePlay.configure(text="pause")
+        knopPausePlay.configure(text="pauze")
         
 def addSongWachtrij(id): #voegt 1 nummer toe aan wachtrij
     nummer = SQL_fitopsy.getSongNameFromTable(id)[0]
@@ -182,14 +185,14 @@ def volgendNummerWachtrij():
 #playlist functies
 def playlistListboxVullen(resulutaten):#voegt alle playlist toe aan listbox playlist
     for resultaat in resulutaten:
-        playlistListbox.insert(END, resultaat)
+        playlistListbox.insert(END, resultaat[0])#resultaat is tuple
         
 def selecterenPlaylist(event):#activeert popup bij selectie in list box voor playlist
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         playlist = event.widget.get(index)
-        playlistMenu(playlist[0])
+        playlistMenu(playlist)
         
 def playlistMenu(playlist):# menu voor opites playlist
     playlist_menu =  Menu(venster, tearoff= 0)
@@ -217,13 +220,13 @@ def addSongPlaylistMenu(id, x,y):#popup voor als je een nummer aan een playlist 
     
     addSongPlaylist_menu =  Menu(venster, tearoff= 0)
 
-    addSongPlaylist_menu.add_command(label= nummer+" - "+artiest, command= lambda: addSongPlaylistMenu(id))#knop heropent popup, zo kan je een label toevoegen aan het menu
+    addSongPlaylist_menu.add_command(label= nummer+" - "+artiest, command= lambda: addSongPlaylistMenu(id, x, y))#knop heropent popup, zo kan je een label toevoegen aan het menu
     addSongPlaylist_menu.add_separator()
     playlists = Menu(venster, tearoff= 0)
     addSongPlaylist_menu.add_cascade(label = "selecteer playlist", menu= playlists)
     allPlaylists = SQL_fitopsy.getAllPlaylists()
     for playlist in allPlaylists:#maakt voor elke playlist een menu knop aan
-        playlists.add_command(label = playlist, command=lambda: addSongPlaylist(nummer, playlist))
+        playlists.add_command(label = playlist[0], command=lambda: addSongPlaylist(nummer, playlist))
 
 
     addSongPlaylist_menu.tk_popup(x, y )
@@ -408,19 +411,24 @@ playlistToevoegenKnop.bind("<Enter>", on_enter)
 playlistToevoegenKnop.bind("<Leave>", on_leave)
 
 
-##BOVEN BALK
+##====BOVEN BALK====
 top = Frame(venster, bg= black, width=400, height= 100)
 top.place(relx=0.5, y=0, anchor=N)
 
-knopPausePlay = Button(top, text="pause", width = 12, command=pausePlay)
+knopPausePlay = Button(top, text="pauze", width = 12, command=pausePlay)
 knopPausePlay.place(relx=0.5, y=4, anchor=N)
 knopPausePlay.bind("<Enter>", on_enter)
 knopPausePlay.bind("<Leave>", on_leave)
 
-knopVolgende = Button(top, text = "next", width=12, command= volgendNummerWachtrij)
+knopVolgende = Button(top, text = "volgende", width=12, command= volgendNummerWachtrij)
 knopVolgende.place(relx=0.5, y=70, anchor=N)
 knopVolgende.bind("<Enter>", on_enter)
 knopVolgende.bind("<Leave>", on_leave)
+
+nowPlayingLabel =  Label(top, text="Speelt nu:")
+nowPlayingLabel.place(x= 30, rely = 0.01, anchor= NW)
+playingLabel = Label(top, width=15, wraplength= 100)
+playingLabel.place(x= 16, rely = 0.2, anchor= NW)
 
 tijdLabel = Label(top, text="0:00 - 0:00", width = 14)
 tijdLabel.place(relx = 0.5, y= 40, anchor=N)
