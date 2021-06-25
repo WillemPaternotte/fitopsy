@@ -147,10 +147,11 @@ def getAllPlaylists():#selecteerd alle playlists
 
 
 # Verdwijderd een gegegeven uit een tabel, door eerst ID (primary key) op te zoeken en dan alle gegevens van die primary key te verwijderen
-def verwijderUitTabel(tabelnaam, titel):
-    id_om_te_verwijderen = getSongLocationFromTable(tabelnaam, titel)[0] # eerst de ID opzoeken dat bij titel hoort
-    cursor.execute("DELETE FROM " + tabelnaam + " WHERE song_id = ?", ( str(id_om_te_verwijderen),) )
-    print("Nummer met titel " + titel +" verwijderd uit tabel: "+ tabelnaam)
+def verwijderSongUitTabel(nummer_id):
+    nummerNaam = getSongNameFromTable(nummer_id)[0] 
+    cursor.execute("DELETE FROM songs WHERE song_id = ?", ( nummer_id,) )
+    print("Nummer met titel: " +nummerNaam  +" verwijderd uit tabel")
+    cursor.execute("COMMIT")
 
 # #Pas een bepaalde gegeven aan in een tabel
 # def pasAanInTabel(tabelnaam, titeloud, titelnieuw):
